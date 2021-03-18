@@ -1,0 +1,110 @@
+openapi: '3.0.0'
+info:
+  title: 'Model Service'
+  description: 'Model Service internal API.'
+  version: '0.0.1'
+
+servers:
+  - url: https://dev-model-service-use1.pennsieve.net
+  - url: https://prd-model-service-use1.pennsieve.io
+
+paths:
+  '/organizations/{organizationId}/datasets/{datasetId}':
+    delete:
+      tags:
+        - Internal
+      summary: 'Delete all objects associated with a dataset'
+      description: 'Delete all objects associated with a dataset'
+      operationId: server.api.internal.delete_dataset
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: batchSize
+          in: query
+          description: The maximum number of database object that will be processed per call
+          required: false
+          schema:
+            type: integer
+            default: 1000
+            minimum: 100
+            maximum: 10000
+        - name: duration
+          in: query
+          description: The maximum duration, in milliseconds, that that delete request will run for
+          required: false
+          schema:
+            type: integer
+            default: 5000
+            minimum: 5
+            maximum: 10000
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetDeletionSummary'
+      security:
+        - Bearer: []
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: server.auth.decode_token
+
+  schemas:
+    OrganizationIdentifier:
+      type: integer
+
+    DatasetIdentifier:
+      type: integer
+
+    DatasetDeletionSummary:
+        type: object
+        required:
+          - done
+          - counts
+        properties:
+          done:
+            type: boolean
+          counts:
+            $ref: '#/components/schemas/DatasetDeletionCounts'
+
+    DatasetDeletionCounts:
+      type: object
+      required:
+        - models
+        - "properties"
+        - records
+        - packages
+        - relationshipStubs
+      properties:
+        models:
+          type: integer
+          format: int64
+        "properties":
+          type: integer
+          format: int64
+        records:
+          type: integer
+          format: int64
+        packages:
+          type: integer
+          format: int64
+        relationshipStubs:
+          type: integer
+          format: int64
+

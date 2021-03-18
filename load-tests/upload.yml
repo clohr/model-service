@@ -1,0 +1,60 @@
+config:
+  target: 'http://localhost:8080'
+  phases:
+    - duration: 1
+      arrivalRate: 1
+  ensure:
+    maxErrorRate: 1
+  variables:
+    datasetId: "1"
+  defaults:
+    headers:
+      Authorization: "Bearer {{ $processEnvironment.JWT }}"
+  processor: "./functions.js"
+
+scenarios:
+  - name: "Add records"
+    flow:
+      # - post:
+      #     url: "/account/api/session"
+      #     json:
+      #       tokenId: "{{ $processEnvironment.PENNSIEVE_API_KEY }}"
+      #       secret: "{{ $processEnvironment.PENNSIEVE_SECRET_KEY }}"
+      #     capture:
+      #       json: "$.session_token"
+      #       as: "api_key"
+
+      # - post:
+      #     url: "/datasets?api_key={{ api_key }}"
+      #     beforeRequest: "genDatasetName"
+      #     json:
+      #       name: "{{ datasetName }}"
+      #     capture:
+      #       - json: "$.content.intId"
+      #         as: "datasetId"
+      #       - json: "$.content.id"
+      #         as: "datasetNodeId"
+
+      - post:
+          url: "/v2/datasets/{{ datasetId }}/models?api_key={{ api_key }}"
+          json:
+            name: "patient"
+            displayName: "Patient"
+            description: "test model"
+          capture:
+            json: "$.id"
+            as: "modelId"
+
+      - put:
+          url: "/v2/datasets/{{ datasetId }}/models/{{ modelId }}/properties?api_key={{ api_key }}"
+          beforeRequest: "genProperties"
+
+      # Batch insert many records - the heart of this scenario
+      - loop:
+          - post:
+              url: "/v2/datasets/{{ datasetId }}/models/{{ modelId }}/records/batch?api_key={{ api_key }}"
+              beforeRequest: "genRecordData"
+        count: 100
+
+      # - delete:
+      #     url: "/datasets/{{ datasetNodeId }}?api_key={{ api_key }}"

@@ -1,0 +1,57 @@
+openapi: '3.0.0'
+info:
+  title: 'Model Service (Streaming)'
+  description: 'Model Service v2 streaming API - specifically for streaming csv content for now.  This API is under active development and subject to change.'
+  version: '0.0.1'
+
+servers:
+  - url: https://api.pennsieve.io/models
+  - url: https://api.pennsieve.net/models
+
+paths:
+  '/{organizationId}/search/records/csv':
+    post:
+      tags:
+        - Search
+      summary: 'Search records across datasets, return records as a csv file'
+      operationId: server.api.v2.search.records_csv
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: './model-service-v2.yml#/components/schemas/OrganizationIdentifier'
+      requestBody:
+        description: The search request
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  description: Not really a string...the form field will be marshalled as json to a server.models.SearchDownloadRequest
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/csv:
+              schema:
+                type: string
+      security:
+        - Bearer: []
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: server.auth.decode_token

@@ -1,0 +1,3677 @@
+openapi: '3.0.0'
+info:
+  title: 'Model Service'
+  description: 'Model Service v1 API'
+  version: '1.0.0'
+
+servers:
+  - url: https://api.pennsieve.io/models/v1
+  - url: https://api.pennsieve.net/models/v1
+
+tags:
+  - name: Concepts
+  - name: Query
+  - name: Proxy
+  - name: Relationships
+
+paths:
+  '/datasets/{datasetId}/concepts':
+    get:
+      tags:
+        - Concepts
+      summary: Returns a list of all Concepts for an dataset
+      operationId: server.api.v1.concepts.get_all_concepts
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Concept"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Concepts
+      summary: Returns the Concept that was created
+      description: ""
+      operationId: server.api.v1.concepts.create_concept
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConceptPayload"
+        description: Concept to be created
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Concept"
+      security:
+        - Bearer: []
+
+  '/datasets/{datasetId}/concepts/{conceptIdOrName}':
+    get:
+      tags:
+        - Concepts
+      summary: Returns a Concept by id for an dataset
+      description: "Returns a Concept by id for an dataset"
+      operationId: server.api.v1.concepts.get_concept
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Concept"
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Concepts
+      summary: Returns the Concept that was updated
+      description: "Returns the Concept that was updated"
+      operationId: server.api.v1.concepts.update_concept
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConceptPayload"
+        description: Concept value to be updated to
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Concept"
+      security:
+        - Bearer: []
+
+    delete:
+      tags:
+        - Concepts
+      summary: Delete a concept by ID
+      description: "Delete a concept by ID"
+      operationId: server.api.v1.concepts.delete_concept
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Concept"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptIdOrName}/properties":
+    get:
+      tags:
+        - Concepts
+      summary: Get all the properties for a concept
+      description: "Get all the properties for a concep"
+      operationId: server.api.v1.concepts.get_all_properties
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SchemaProperty"
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Concepts
+      summary: Update or create properties for the concept
+      description: "Update or create properties for the concept"
+      operationId: server.api.v1.concepts.update_properties
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ConceptPropertyBulkUpdatePayload"
+        description: Data to update the properties with. Needs to be a List of values ie
+          [{...}, {...}]
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SchemaProperty"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptIdOrName}/properties/{propertyId}":
+    delete:
+      tags:
+        - Concepts
+      summary: Delete a property
+      description: "Delete a property"
+      operationId: server.api.v1.concepts.delete_property
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: propertyId
+          in: path
+          description: Property Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptIdOrName}/instances":
+    get:
+      tags:
+        - Concepts
+      summary: Get all Concept Instance with the given concept ID
+      description: "Get all Concept Instance with the given concept ID"
+      operationId: server.api.v1.concept_instances.get_all_concept_instances
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 100
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: orderBy
+          in: query
+          description: field to order by
+          required: false
+          schema:
+            type: string
+        - name: ascending
+          in: query
+          description: sort in ascending order
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Concepts
+      summary: Returns the Concept Instance that was created
+      description: "Returns the Concept Instance that was created"
+      operationId: server.api.v1.concept_instances.create_concept_instance
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceDataPayloadWrapper'
+        required: true
+
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Concepts
+      summary: Deletes the Concept Instances with the given concept id and instance ids
+      description: ""
+      operationId: server.api.v1.concept_instances.delete_concept_instances
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      # Note: this is not used by connexion as a request body is not supported
+      # for the DELETE method.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkDeleteResponse"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptIdOrName}/instances/{conceptInstanceId}":
+    get:
+      tags:
+        - Concepts
+      summary: Get the Concept Instance with the given concept ID and instance ID
+      description: "Get the Concept Instance with the given concept ID and instance ID"
+      operationId: server.api.v1.concept_instances.get_concept_instance
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id or Name
+          required: true
+          schema:
+            type: string
+        - name: conceptInstanceId
+          in: path
+          description: Concept Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Concepts
+      summary: Updates the Concept Instance with the given concept ID, instance ID and values
+      description: "Updates the Concept Instance with the given concept ID, instance ID and values"
+      operationId: server.api.v1.concept_instances.update_concept_instance
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: conceptInstanceId
+          in: path
+          description: Concept Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstanceDataPayloadWrapper"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Concepts
+      summary: Deletes the Concept Instance with the given concept ID and instance ID
+      description: "Deletes the Concept Instance with the given concept ID and instance ID"
+      operationId: server.api.v1.concept_instances.delete_concept_instance
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: conceptInstanceId
+          in: path
+          description: Concept Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+
+  # "/datasets/{datasetId}/concepts/{id}/relationshipCount":
+  #   get:
+  #     tags:
+  #       - Concepts
+  #     summary: Returns the number of relationships associated with a Concept Id
+  #     description: ""
+  #     operationId: getRelationshipCount
+  #     parameters:
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: id
+  #         in: path
+  #         description: Concept Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: integer
+  #               format: int32
+  #     security:
+  #       - Bearer: []
+
+  "/datasets/{datasetId}/concepts/linked/properties":
+    get:
+      tags:
+        - Concepts
+      summary: Returns a list of all linked properties for a dataset
+      description: "Returns a list of all linked properties for a dataset"
+      operationId: server.api.v1.linked_properties.get_all_schema_linked_properties
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SchemaLinkedPropertyTarget"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/schema/graph":
+    get:
+      tags:
+        - Concepts
+      summary: Returns a list of all Concepts, Linked Properties and
+        SchemaRelationships for a dataset
+      description: "Returns a list of all Concepts, Linked Properties and SchemaRelationships for a dataset"
+      operationId: server.api.v1.concepts.get_schema_graph
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{id}/linked":
+    get:
+      tags:
+        - Concepts
+      summary: "Gets all schema linked properties attached to the concept"
+      description: "Gets all schema linked properties attached to the concept"
+      operationId: server.api.v1.linked_properties.get_schema_linked_properties
+      parameters:
+        - name: id
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SchemaLinkedPropertyTarget"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Concepts
+      summary: "Returns the schema linked property that was created"
+      description: "Returns the schema linked property that was created"
+      operationId: server.api.v1.linked_properties.create_schema_linked_property
+      parameters:
+        - name: id
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSchemaLinkedPropertyPayload"
+        description: Schema linked property to be created
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaLinkedProperty"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{id}/linked/bulk":
+    post:
+      tags:
+        - Concepts
+      summary: "Returns the schema linked properties that were created"
+      description: "Returns the schema linked properties that were created"
+      operationId: server.api.v1.linked_properties.create_schema_linked_properties
+      parameters:
+        - name: id
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateSchemaLinkedPropertyPayload'
+        description: Schema linked properties to be created
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SchemaLinkedProperty"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{id}/linked/{linkId}":
+    put:
+      tags:
+        - Concepts
+      summary: "Returns the schema linked property that was created"
+      description: "Returns the schema linked property that was created"
+      operationId: server.api.v1.linked_properties.update_schema_linked_property
+      parameters:
+        - name: id
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: linkId
+          in: path
+          description: Schema link property ID
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSchemaLinkedPropertyPayload"
+        description: Schema linked property properties to be updated
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaLinkedProperty"
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Concepts
+      summary: "Deletes a schema linked property by its ID"
+      description: "Deletes a schema linked property by its ID"
+      operationId: server.api.v1.linked_properties.delete_schema_linked_property
+      parameters:
+        - name: id
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: linkId
+          in: path
+          description: Schema linked property ID
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{idOrName}/related":
+    get:
+      tags:
+        - Concepts
+      summary: Returns a related concepts
+      description: "Returns a related concepts"
+      operationId: server.api.v1.concepts.get_related_concepts
+      parameters:
+        - name: idOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Concept"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/graph/summary":
+    get:
+      tags:
+        - Concepts
+      summary: Get summary metrics for a graph
+      description: "Get summary metrics for a graph"
+      operationId: server.api.v1.concepts.get_graph_summary
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopologySummary"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{id}/topology":
+    get:
+      tags:
+        - Concepts
+      summary: Get all SchemaRelationships and the Concepts they point to
+      description: "Get all SchemaRelationships and the Concepts they point to"
+      operationId: server.api.v1.concepts.get_topology
+      parameters:
+        - name: id
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopologyConceptSchema"
+      security:
+        - Bearer: []
+
+  # "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/relations":
+  #   put:
+  #     tags:
+  #       - Concepts
+  #     summary: Update all relations of a certain type with the given relationship type
+  #     description: ""
+  #     operationId: updateRelations
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: Concept instance Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: conceptId
+  #         in: path
+  #         description: conceptId
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/BulkConceptRelationPayload"
+  #       description: The relationship, concept and concept instance value to be created or
+  #         updated
+  #       required: true
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: "#/components/schemas/ConceptInstance"
+  #     security:
+  #       - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/relations/{targetConceptIdOrName}":
+    get:
+      tags:
+        - Concepts
+      summary: Get the concept instances of type ConceptId related to some particular instance, and the relationship
+      description: "Get the concept instances of type ConceptId related to some particular instance, and the relationship"
+      operationId: server.api.v1.concepts.get_related
+      parameters:
+        - name: id
+          in: path
+          description: Concept instance Id
+          required: true
+          schema:
+            type: string
+        - name: conceptId
+          in: path
+          description: conceptId
+          required: true
+          schema:
+            type: string
+        - name: targetConceptIdOrName
+          in: path
+          description: targetConceptIdOrName
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: relationshipOrderBy
+          in: query
+          description: relationship field to order the results by. Currently only supports
+            label
+          required: false
+          schema:
+            type: string
+        - name: recordOrderBy
+          in: query
+          description: field of the record to order the results by
+          required: false
+          schema:
+            type: string
+        - name: ascending
+          in: query
+          description: ascending
+          required: false
+          schema:
+            type: boolean
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+        - name: includeIncomingLinkedProperties
+          in: query
+          description: include linked properties in addition to normal record relationships
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    # Used to model a (RelationshipInstance, ConceptInstance) pair
+                    # or a (LinkedProperty, ConceptInstance) pair
+                    anyOf:
+                      - $ref: "#/components/schemas/RelationshipInstance"
+                      - $ref: "#/components/schemas/LinkedProperty"
+                      - $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/files-paged":
+    get:
+      tags:
+        - Concepts
+      summary: Get the package related to some particular instance, and the relationship
+      description: ""
+      operationId: server.api.v1.concepts.get_files_paged
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: id
+          in: path
+          description: Concept instance Id
+          required: true
+          schema:
+            type: string
+        - name: conceptId
+          in: path
+          description: conceptId
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: orderBy
+          in: query
+          description: orderBy
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - name
+                - type
+                - createdAt
+                - updatedAt
+                - nodeId
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResponse"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/files":
+    get:
+      tags:
+        - Concepts
+      summary: Get the package related to some particular instance, and the relationship
+      description: ""
+      operationId: server.api.v1.concepts.get_files
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: id
+          in: path
+          description: Concept instance Id
+          required: true
+          schema:
+            type: string
+        - name: conceptId
+          in: path
+          description: conceptId
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: orderBy
+          in: query
+          description: orderBy
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - name
+                - type
+                - createdAt
+                - updatedAt
+                - nodeId
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IdWrapperAndPackageDTO"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptIdOrName}/instances/batch":
+    post:
+      tags:
+        - Concepts
+      summary: Returns a stream of Concepts instances that were created
+      description: "Returns a stream of Concepts instances that were created"
+      operationId:  server.api.v1.concept_instances.create_concept_instance_batch
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/InstanceDataPayloadWrapper"
+        description: Concept Instance values to be created
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptIdOrName}/instances/{id}/relationCounts":
+    get:
+      tags:
+        - Concepts
+      summary: Get the Concept Instance with the given concept id and instance id
+      description: ""
+      operationId:  server.api.v1.concept_instances.get_concept_instance_relationship_counts
+      parameters:
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id or name
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Concept Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+        - name: includeIncomingLinkedProperties
+          in: query
+          description: count incoming linked properties in addition to normal relationships
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RelationCount"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/linked":
+    get:
+      tags:
+        - Concepts
+      summary: "Gets the linked properties attached to the record with the given concept and record ID"
+      description: "Gets the linked properties attached to the record with the given concept and record ID"
+      operationId: server.api.v1.linked_properties.get_linked_properties
+      parameters:
+        - name: conceptId
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Concept Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LinkedProperty"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Concepts
+      summary: Attaches a linked property to the record specified by the given concept
+        ID and record ID
+      description: ""
+      operationId: server.api.v1.linked_properties.create_linked_property
+      parameters:
+        - name: conceptId
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Concept Instance ID
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLinkedPropertyPayload"
+        description: The linked property to be created
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkedProperty"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/linked/batch":
+    post:
+      tags:
+        - Concepts
+      summary: Attaches multiple linked properties to the record specified by the given concept
+        ID and record ID
+      description: ""
+      operationId: server.api.v1.linked_properties.create_linked_properties
+      parameters:
+        - name: conceptId
+          in: path
+          description: Concept ID or name
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Concept Instance ID
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BatchCreateLinkedPropertyPayload"
+        description: The list of linked properties to be created for the record
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkedProperties"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/concepts/{conceptId}/instances/{id}/linked/{linkId}":
+    delete:
+      tags:
+        - Concepts
+      summary: "Deletes the linked properties attached to the record with the given
+        concept and record ID"
+      description: "Deletes the linked properties attached to the record with the given"
+      operationId: server.api.v1.linked_properties.delete_linked_property
+      parameters:
+        - name: conceptId
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Concept Instance Id
+          required: true
+          schema:
+            type: string
+        - name: linkId
+          in: path
+          description: Concept Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/query/run":
+    post:
+      tags:
+        - Query
+      summary: Execute the given graph query and return the response
+      description: "Execute the given graph query and return the response"
+      operationId: server.api.v1.query.run
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GraphQuery"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: "#/components/schemas/QueryResult"
+                    - $ref: "#/components/schemas/GroupCount"
+      security:
+        - Bearer: []
+
+  # "/datasets/{datasetId}/query/count":
+  #   post:
+  #     tags:
+  #       - Query
+  #     summary: Execute the given graph query and counts all results. This ignores limit
+  #       and offset query paramaters
+  #     description: ""
+  #     operationId: count
+  #     parameters:
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     requestBody:
+  #       $ref: "#/components/requestBodies/GraphQuery"
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: integer
+  #               format: int32
+  #     security:
+  #       - Bearer: []
+
+  # "/datasets/{datasetId}/query":
+  #   get:
+  #     tags:
+  #       - Query
+  #     summary: Returns all saved GraphQueries
+  #     description: ""
+  #     operationId: getAll
+  #     parameters:
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/ConceptQuery"
+  #     security:
+  #       - Bearer: []
+  #   post:
+  #     tags:
+  #       - Query
+  #     summary: Returns the saved GraphQuery that was created
+  #     description: ""
+  #     operationId: createQuery
+  #     parameters:
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/ConceptQuery"
+  #       description: Concept to be created
+  #       required: true
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/ConceptQuery"
+  #     security:
+  #       - Bearer: []
+
+  # "/datasets/{datasetId}/query/{id}":
+  #   get:
+  #     tags:
+  #       - Query
+  #     summary: Returns a saved GraphQuery by id
+  #     description: ""
+  #     operationId: getQueryById
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: Saved GraphQuery Id
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/ConceptQuery"
+  #     security:
+  #       - Bearer: []
+  #   put:
+  #     tags:
+  #       - Query
+  #     summary: Returns the saved query that was updated
+  #     description: ""
+  #     operationId: updateQuery
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: Saved GraphQuery Id
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/ConceptQuery"
+  #       description: Concept value to be updated to
+  #       required: true
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/ConceptQuery"
+  #     security:
+  #       - Bearer: []
+  #   delete:
+  #     tags:
+  #       - Query
+  #     summary: Deletes the saved GraphQuery with the given id
+  #     description: ""
+  #     operationId: deleteQuery
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: Saved GraphQuery Id
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/ConceptQuery"
+  #     security:
+  #       - Bearer: []
+
+  "/datasets/{datasetId}/proxy/{proxyType}/instances":
+    get:
+      tags:
+        - Proxy
+      summary: Returns a list of all Proxy Instances for a proxy type
+      description: ""
+      operationId: server.api.v1.proxies.get_all_proxy_instances
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProxyInstance"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Proxy
+      summary: Returns the Proxy Concept Instance and Relationship Instance that were
+        created
+      description: ""
+      operationId: server.api.v1.proxies.create_proxy_instance
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProxyInstancePayload"
+        description: Proxy details to be used to create a new proxy concept and relationship
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LinkResult"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/proxy/{proxyType}":
+    get:
+      tags:
+        - Proxy
+      summary: Returns the Proxy Concept of the request proxy type
+      description: ""
+      operationId: server.api.v1.proxies.get_proxy_concept
+      parameters:
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProxyConcept"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/proxy/{proxyType}/instances/{id}":
+    get:
+      tags:
+        - Proxy
+      summary: Returns a Proxy Instance by id for an dataset
+      description: ""
+      operationId: server.api.v1.proxies.get_proxy_instance
+      parameters:
+        - name: id
+          in: path
+          description: ProxyInstance Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProxyInstance"
+      security:
+        - Bearer: []
+
+    delete:
+      tags:
+        - Proxy
+      summary: Deletes the Proxy Instance with the given id
+      description: ""
+      operationId: server.api.v1.proxies.delete_proxy_instance
+      parameters:
+        - name: id
+          in: path
+          description: Proxy Instance Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/proxy/{proxyType}/instances/bulk":
+    delete:
+      tags:
+        - Proxies
+      summary: Deletes the Proxy Instance with the proxy and instance id
+      operationId: server.api.v1.proxies.delete_proxy_instances
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+      # Note: this is not used by connexion as a request body is not supported
+      # for the DELETE method.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkDeleteProxiesPayload"
+        description: Proxy instance ids to be deleted
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/proxy/{proxyType}/external/{nodeId}/relationCounts":
+    get:
+      tags:
+        - Proxy
+      summary: Returns the types of relationships that exist and their counts
+      description: ""
+      operationId: server.api.v1.proxies.get_proxy_relationship_counts
+      parameters:
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: nodeId
+          in: path
+          description: nodeId of a package
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProxyRelationshipCount"
+      security:
+        - Bearer: []
+
+  # "/datasets/{datasetId}/proxy/{proxyType}/external/{id}/relations/{conceptIdOrName}":
+  #   get:
+  #     tags:
+  #       - Proxy
+  #     summary: Get the concept instances of type ConceptId related to some particular
+  #       instance, and the relationship
+  #     description: ""
+  #     operationId: getRelations
+  #     parameters:
+  #       - name: proxyType
+  #         in: path
+  #         description: Proxy Type
+  #         required: true
+  #         schema:
+  #           $ref: "#/components/schemas/ProxyType"
+  #       - name: id
+  #         in: path
+  #         description: nodeId of package
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: conceptIdOrName
+  #         in: path
+  #         description: Concept Id or Name
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: limit
+  #         in: query
+  #         description: limit
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: offset
+  #         in: query
+  #         description: offset
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: relationshipOrderBy
+  #         in: query
+  #         description: relationship field to order the results by. Currently only supports
+  #           label
+  #         required: false
+  #         schema:
+  #           type: string
+  #       - name: recordOrderBy
+  #         in: query
+  #         description: field of the record to order the resutls by
+  #         required: false
+  #         schema:
+  #           type: string
+  #       - name: ascending
+  #         in: query
+  #         description: ascending
+  #         required: false
+  #         schema:
+  #           type: boolean
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 type: object
+  #     security:
+  #       - Bearer: []
+
+  "/datasets/{datasetId}/proxy/{proxyType}/external/{packageId}/relations/{conceptIdOrName}/files":
+    get:
+      tags:
+        - Proxy
+      summary: "Get records related to this proxy package"
+      description: "Get records related to this proxy package"
+      operationId: server.api.v1.proxies.get_records_related_to_package
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+        - name: proxyType
+          in: path
+          description: Proxy Type
+          required: true
+          schema:
+            $ref: "#/components/schemas/ProxyType"
+        - name: packageId
+          in: path
+          description: nodeId of package
+          required: true
+          schema:
+            type: string
+        - name: conceptIdOrName
+          in: path
+          description: Concept Id or Name
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: relationshipOrderBy
+          in: query
+          description: relationship field to order the results by. Currently only supports
+            label
+          required: false
+          schema:
+            type: string
+        - name: recordOrderBy
+          in: query
+          description: field of the record to order the resutls by
+          required: false
+          schema:
+            type: string
+        - name: ascending
+          in: query
+          description: ascending
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    # Used to model a (RelationshipInstance, ConceptInstance) pair
+                    anyOf:
+                      - $ref: "#/components/schemas/RelationshipInstance"
+                      - $ref: "#/components/schemas/ConceptInstance"
+      security:
+        - Bearer: []
+
+  # "/datasets/{datasetId}/proxy/{proxyType}/external/{id}/files":
+  #   get:
+  #     tags:
+  #       - Proxy
+  #     summary: Get the packages related to some particular proxy by it's external id
+  #       and the relationship
+  #     description: ""
+  #     operationId: getFiles
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: external id
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: proxyType
+  #         in: path
+  #         description: Proxy Type
+  #         required: true
+  #         schema:
+  #           $ref: "#/components/schemas/ProxyType"
+  #       - name: limit
+  #         in: query
+  #         description: limit
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: offset
+  #         in: query
+  #         description: offset
+  #         required: false
+  #         schema:
+  #           type: integer
+  #           format: int64
+  #       - name: orderBy
+  #         in: query
+  #         description: orderBy
+  #         required: false
+  #         explode: true
+  #         schema:
+  #           type: array
+  #           items:
+  #             type: string
+  #             enum:
+  #               - name
+  #               - type
+  #               - createdAt
+  #               - updatedAt
+  #               - nodeId
+  #       - name: ascending
+  #         in: query
+  #         description: ascending
+  #         required: false
+  #         schema:
+  #           type: boolean
+  #       - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 type: object
+  #     security:
+  #       - Bearer: []
+
+  "/datasets/{datasetId}/relationships/{relationshipIdOrName}/instances":
+    get:
+      tags:
+        - Relationships
+      summary: "Returns all relationship instances with the given relationship id"
+      description: "Returns all relationship instances with the given relationship id"
+      operationId:  server.api.v1.relationship_instances.get_concept_instance_relationships
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id or Type
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RelationshipInstance"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Relationships
+      summary: "Returns the Relationship Instance that was created"
+      description: "Returns the Relationship Instance that was created"
+      operationId: server.api.v1.relationship_instances.create_concept_instance_relationship
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id or Type
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RelationshipInstanceCreatePayload"
+        description: Relationship Instance to be created
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                # Used to model a (RelationshipInstance, Relationship) pair
+                type: array
+                items:
+                  # Used to model a (RelationshipInstance, Relationship) pair
+                  oneOf:
+                    - $ref: "#/components/schemas/Relationship"
+                    - $ref: "#/components/schemas/RelationshipInstance"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/relationships/{relationshipIdOrName}":
+    get:
+      tags:
+        - Relationships
+      summary: "Returns a Relationship by ID for an organization"
+      description: "Returns a Relationship by ID for an organization"
+      operationId: server.api.v1.relationships.get_concept_relationship
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id or type
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Relationships
+      summary: "Update a Relationship of an organization"
+      description: "Update a Relationship of an organization"
+      operationId: server.api.v1.relationships.update_concept_relationship
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRelationshipPayload"
+        description: Relationship to be updated
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Relationship"
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Relationships
+      summary: "Deletes a Relationship by id"
+      description: "Deletes a Relationship by id"
+      operationId: server.api.v1.relationships.delete_concept_relationship
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/relationships/{relationshipIdOrName}/instances/{id}":
+    get:
+      tags:
+        - Relationships
+      summary: Returns the Concept Instance with the given relationship id and instance id
+      description: "Returns the Concept Instance with the given relationship id and instance id"
+      operationId: server.api.v1.relationship_instances.get_concept_instance_relationship
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Relationship Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RelationshipInstance"
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Relationships
+      summary: "Deletes the Concept Instance with the given relationship id and instance id"
+      description: >-
+        WARNING: this endpoint is deprecated and should not be used
+
+        Use /v2/organizations/:id/datasets/:id/records/:id/relationships/:id instead.
+      operationId: server.api.v1.relationship_instances.delete_concept_instance_relationship
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Relationship Instance Id
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/relationships":
+    get:
+      tags:
+        - Relationships
+      summary: "Returns a list of all Relationships for a dataset"
+      description: "Returns a list of all Relationships for a dataset"
+      operationId: server.api.v1.relationships.get_concept_relationships
+      parameters:
+        - name: from
+          in: query
+          description: Source Model Id
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: to
+          in: query
+          description: Destination Model Id
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Relationship"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Relationships
+      summary: "Create a new concept relationship"
+      description: "Create a new concept relationship"
+      operationId: server.api.v1.relationships.create_concept_relationship
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRelationshipPayload"
+        description: Relationship to be created
+        required: true
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/relationships/{relationshipIdOrName}/instances/batch":
+    post:
+      tags:
+        - Relationships
+      summary: "Returns a stream of the Relationship Instances created"
+      description: "Returns a stream of the Relationship Instances created"
+      operationId:  server.api.v1.relationship_instances.create_concept_instance_relationships
+      parameters:
+        - name: relationshipIdOrName
+          in: path
+          description: Relationship Id or Type
+          required: true
+          schema:
+            type: string
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/RelationshipInstanceCreatePayload"
+        description: Relationship Instances to be created
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    # Used to model a (RelationshipInstance, Relationship) pair
+                    oneOf:
+                      - $ref: "#/components/schemas/Relationship"
+                      - $ref: "#/components/schemas/RelationshipInstance"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/relationships/instances/bulk":
+    delete:
+      tags:
+        - Relationships
+      summary: Deletes the Relationship Instance with the given conceptId and instance id
+      description: >-
+        WARNING: this endpoint is deprecated and should not be used
+
+        Use POST /v2/organizations/:id/datasets/:id/records/:id/relationships/delete instead
+      operationId: server.api.v1.relationship_instances.delete_concept_instance_relationships
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      # Note: this is not used by connexion as a request body is not supported
+      # for the DELETE method.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkDeleteRelationshipsPayload"
+        description: Relationship ids to be deleted
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/properties/units":
+    get:
+      tags:
+        - Properties
+      summary: "Return known units for Long and Double properties"
+      operationId: server.api.v1.properties.get_units
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UnitDimension"
+      security:
+        - Bearer: []
+
+  "/datasets/{datasetId}/properties/strings":
+    get:
+      tags:
+        - Properties
+      summary: "Return known string subtypes and human readable labels"
+      operationId: server.api.v1.properties.get_string_subtypes
+      parameters:
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+      security:
+        - Bearer: []
+
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: server.auth.decode_token
+
+  schemas:
+
+    PrimitiveType:
+      anyOf:
+        - type: boolean
+        - type: string
+        - type: number
+
+    AnyValue:
+      anyOf:
+        - type: string
+          nullable: true
+        - type: number
+          nullable: true
+        - type: integer
+          nullable: true
+        - type: boolean
+          nullable: true
+        - type: array
+          items: {}
+          nullable: true
+        - type: object
+          nullable: true
+
+    BulkConceptInstanceRelationPayload:
+      type: object
+      required:
+        - instanceData
+      properties:
+        id:
+          type: string
+          format: uuid
+        instanceData:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstanceDatumPayload"
+
+    InstanceDatumPayload:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        value:
+          $ref: "#/components/schemas/AnyValue"
+          # Note: not actually true: lists are used with enum + array data typed values:
+          description: Value must be a String, String formatted as a Date, Boolean, Long or
+            Double
+
+    NodeId:
+      type: string
+
+    CreateLinkedPropertyPayload:
+      type: object
+      required:
+        - schemaLinkedPropertyId
+        - to
+      properties:
+        name:
+          type: string
+        schemaLinkedPropertyId:
+          type: string
+          format: uuid
+        to:
+          type: string
+          format: uuid
+
+    BatchCreateLinkedPropertyPayload:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateLinkedPropertyPayload"
+
+    RelationshipSummary:
+      type: object
+      required:
+        - count
+        - from
+        - name
+        - to
+      properties:
+        name:
+          type: string
+        from:
+          type: string
+          format: uuid
+        to:
+          type: string
+          format: uuid
+        count:
+          type: integer
+          format: int64
+
+    UpdateSchemaLinkedPropertyPayload:
+      type: object
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+        position:
+          type: integer
+          format: int64
+
+    InstanceDataPayloadWrapper:
+      type: object
+      required:
+        - values
+      properties:
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstanceDatumPayload"
+
+    ProxyInstance:
+      type: object
+      required:
+        - createdAt
+        - id
+        - proxyType
+        - updatedAt
+      properties:
+        proxyType:
+          $ref: "#/components/schemas/ProxyType"
+        externalId:
+          description: value of a String or Int
+          oneOf:
+            - type: number
+            - type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        id:
+          type: string
+          format: uuid
+
+    ProxyRelationshipDirection:
+      type: string
+      enum:
+        - FromTarget
+        - ToTarget
+
+    LinkedProperty:
+      type: object
+      required:
+        - createdAt
+        - createdBy
+        - from
+        - id
+        - schemaLinkedPropertyId
+        - to
+        - updatedAt
+        - updatedBy
+        - name
+        - displayName
+      properties:
+        schemaLinkedPropertyId:
+          type: string
+          format: uuid
+        from:
+          type: string
+          format: uuid
+        to:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: "#/components/schemas/NodeId"
+        updatedBy:
+          $ref: "#/components/schemas/NodeId"
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        displayName:
+          type: string
+
+    LinkedProperties:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkedProperty"
+
+    BulkDeleteRelationshipsPayload:
+      type: object
+      required:
+        - relationshipInstanceIds
+      properties:
+        relationshipInstanceIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    BulkDeleteProxiesPayload:
+      type: object
+      required:
+        - sourceRecordId
+        - proxyInstanceIds
+      properties:
+        sourceRecordId:
+          type: string
+          format: uuid
+        proxyInstanceIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    BulkConceptRelationPayload:
+      type: object
+      required:
+        - conceptToCreate
+        - instances
+        - relationship
+      properties:
+        relationship:
+          $ref: "#/components/schemas/IdOrName"
+        conceptToCreate:
+          $ref: "#/components/schemas/IdOrName"
+        instances:
+          type: array
+          items:
+            $ref: "#/components/schemas/BulkConceptInstanceRelationPayload"
+
+    PagedResponse:
+      type: object
+      required:
+        - limit
+        - offset
+        - results
+      properties:
+        limit:
+          type: integer
+          format: int64
+        offset:
+          type: integer
+          format: int64
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdWrapperAndPackageDTO"
+        totalCount:
+          type: number
+
+    IdWrapperAndPackageDTO:
+      description: 'A 2-tuple of (IdWrapper, PackageDTO)'
+      type: array
+      items:
+        oneOf:
+          - $ref: "#/components/schemas/IdWrapper"
+          - $ref: "#/components/schemas/PackageDTO"
+
+    IdWrapper:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    PackageDTO:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: object
+
+    SchemaLinkedProperty:
+      type: object
+      required:
+        - createdAt
+        - createdBy
+        - displayName
+        - from
+        - id
+        - name
+        - position
+        - to
+        - type
+        - updatedAt
+        - updatedBy
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        position:
+          type: integer
+          format: int64
+        from:
+          type: string
+          format: uuid
+        to:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: "#/components/schemas/NodeId"
+        updatedBy:
+          $ref: "#/components/schemas/NodeId"
+        type:
+          type: string
+        id:
+          type: string
+          format: uuid
+    Predicate:
+      type: object
+
+    BulkDeleteResponse:
+      type: object
+      required:
+        - errors
+        - success
+      properties:
+        success:
+          type: array
+          items:
+            type: string
+            format: uuid
+        errors:
+          description: An array of `(id, errorMessage)` two-tuples.
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+
+    BoxedUnit:
+      type: object
+
+    OrderBy:
+      type: object
+      nullable: true
+
+    Join:
+      type: object
+      required:
+        - filters
+        - targetType
+      properties:
+        relationshipType:
+          type: string
+          description: Value of a UUID as a String, or the name of the concept as a String
+        targetType:
+          $ref: "#/components/schemas/QueryType"
+        filters:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyFilter"
+        key:
+          type: string
+
+    QueryType:
+      type: object
+
+    ProxyType:
+      type: string
+      enum:
+        - package
+
+    ProxyTarget:
+      type: object
+      required:
+        - direction
+        - linkTarget
+        - relationshipType
+        - relationshipData
+      properties:
+        direction:
+          $ref: "#/components/schemas/ProxyRelationshipDirection"
+        # Used only for concept (not external) targets
+        # TODO: enforce UUID??
+        linkTarget:
+          $ref: "#/components/schemas/ProxyLinkConceptInstanceTarget"
+          description: Value of a UUID as a String
+        relationshipType:
+          type: string
+          description: Value of a UUID as a String, or the name of the relationship as a String
+        relationshipData:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstanceDatumPayload"
+
+    ProxyLinkConceptInstanceTarget:
+      type: object
+      required:
+        - ConceptInstance
+      properties:
+        ConceptInstance:
+          type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+              format: uuid
+
+    CreateSchemaLinkedPropertyPayload:
+      type: object
+      required:
+        - displayName
+        - name
+        - to
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        to:
+          type: string
+          format: uuid
+        position:
+          type: integer
+          format: int64
+
+    ProxyConcept:
+      type: object
+      required:
+        - id
+        - proxyType
+      properties:
+        proxyType:
+          $ref: "#/components/schemas/ProxyType"
+        id:
+          type: string
+          format: uuid
+
+    LinkResult:
+      type: object
+      required:
+        - proxyInstance
+        - relationshipInstance
+      properties:
+        proxyInstance:
+          $ref: "#/components/schemas/ProxyInstance"
+        relationshipInstance:
+          $ref: "#/components/schemas/RelationshipInstance"
+
+    RelationshipInstanceCreatePayload:
+      type: object
+      required:
+        - from
+        - to
+        - values
+      properties:
+        from:
+          type: string
+          format: uuid
+        to:
+          type: string
+          format: uuid
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstanceDatumPayload"
+        relationshipToCreate:
+          $ref: "#/components/schemas/CreateRelationshipPayload"
+
+    GraphQuery:
+      type: object
+      required:
+        - filters
+        - joins
+        - type
+      properties:
+        type:
+          $ref: "#/components/schemas/QueryType"
+        filters:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyFilter"
+        joins:
+          type: array
+          items:
+            $ref: "#/components/schemas/Join"
+        orderBy:
+          $ref: "#/components/schemas/OrderBy"
+        limit:
+          type: number
+          nullable: true
+        offset:
+          type: number
+          nullable: true
+        select:
+          $ref: "#/components/schemas/Select"
+
+    ConceptQuery:
+      type: object
+      required:
+        - createdAt
+        - id
+        - name
+        - query
+        - updatedAt
+        - userId
+      properties:
+        name:
+          type: string
+        userId:
+          type: integer
+          format: int32
+        query:
+          $ref: "#/components/schemas/GraphQuery"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        id:
+          type: integer
+          format: int32
+
+    TopologySummary:
+      type: object
+      required:
+        - modelCount
+        - modelRecordCount
+        - modelSummary
+        - relationshipCount
+        - relationshipRecordCount
+        - relationshipSummary
+        - relationshipTypeCount
+        - relationshipTypeSummary
+      properties:
+        modelSummary:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModelSummary"
+        relationshipSummary:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelationshipSummary"
+        relationshipTypeSummary:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelationshipTypeSummary"
+        modelCount:
+          type: integer
+          format: int64
+        modelRecordCount:
+          type: integer
+          format: int64
+        relationshipCount:
+          type: integer
+          format: int64
+        relationshipRecordCount:
+          type: integer
+          format: int64
+        relationshipTypeCount:
+          type: integer
+          format: int64
+
+    TopologyConceptSchema:
+      type: object
+      required:
+        - count
+        - description
+        - displayName
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        count:
+          type: integer
+          format: int64
+
+    SchemaLinkedPropertyTarget:
+      type: object
+      required:
+        - concept
+        - link
+      properties:
+        link:
+          $ref: "#/components/schemas/SchemaLinkedProperty"
+        concept:
+          type: string
+          format: uuid
+
+    CreateRelationshipPayload:
+      type: object
+      required:
+        - description
+        - displayName
+        - name
+        - schema
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        schema:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchemaProperty"
+        from:
+          type: string
+          format: uuid
+          nullable: true
+        to:
+          type: string
+          format: uuid
+          nullable: true
+
+    Icon:
+      type: object
+
+    RelationshipTypeSummary:
+      type: object
+      required:
+        - count
+        - name
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+          format: int64
+
+    KeyFilter:
+      type: object
+      required:
+        - key
+        - predicate
+      properties:
+        key:
+          type: string
+        predicate:
+          $ref: "#/components/schemas/Predicate"
+
+    Relationship:
+      type: object
+      required:
+        - createdAt
+        - createdBy
+        - description
+        - displayName
+        - id
+        - name
+        - schema
+        - updatedAt
+        - updatedBy
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        schema:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchemaProperty"
+        from:
+          type: string
+          format: uuid
+          nullable: true
+        to:
+          type: string
+          format: uuid
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: "#/components/schemas/NodeId"
+        updatedBy:
+          $ref: "#/components/schemas/NodeId"
+        id:
+          type: string
+          format: uuid
+
+    CreateProxyInstancePayload:
+      type: object
+      properties:
+        externalId:
+          description: value of a String or Int
+          oneOf:
+            - type: number
+            - type: string
+        targets:
+          type: array
+          description: Proxy targets
+          items:
+            $ref: "#/components/schemas/ProxyTarget"
+
+    Concept:
+      type: object
+      required:
+        - count
+        - createdAt
+        - createdBy
+        - description
+        - displayName
+        - id
+        - locked
+        - name
+        - propertyCount
+        - updatedAt
+        - updatedBy
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        createdBy:
+          $ref: "#/components/schemas/NodeId"
+        updatedBy:
+          $ref: "#/components/schemas/NodeId"
+        locked:
+          type: boolean
+        id:
+          type: string
+          format: uuid
+        count:
+          type: integer
+          format: int64
+        propertyCount:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        icon:
+          $ref: "#/components/schemas/Icon"
+        templateId:
+          type: string
+          format: uuid
+          nullable: true
+
+    UpdateRelationshipPayload:
+      type: object
+      required:
+        # - description
+        - displayName
+      properties:
+        displayName:
+          type: string
+        description:
+          type: string
+
+    ConceptPayload:
+      type: object
+      required:
+        - description
+        - displayName
+        - name
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        locked:
+          type: boolean
+        icon:
+          $ref: "#/components/schemas/Icon"
+        templateId:
+          type: string
+          format: uuid
+          nullable: true
+
+    SchemaProperty:
+      type: object
+      required:
+        - conceptTitle
+        - createdAt
+        - dataType
+        - default
+        - description
+        - displayName
+          #- id
+        - index
+        - locked
+        - name
+        - required
+        - updatedAt
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        dataType:
+          $ref: "#/components/schemas/APropertyDataType"
+        index:
+          type: integer
+          format: int64
+        locked:
+          type: boolean
+        default:
+          type: boolean
+        conceptTitle:
+          type: boolean
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        description:
+          type: string
+        required:
+          type: boolean
+        # defaultValue:
+        #   oneOf:
+        #     - type: boolean
+        #     - type: string
+        #     - type: number
+
+    ConceptPropertyBulkUpdatePayload:
+      type: object
+      required:
+        - conceptTitle
+        - dataType
+        - default
+        - description
+        - displayName
+        - locked
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        locked:
+          type: boolean
+        default:
+          type: boolean
+        conceptTitle:
+          type: boolean
+        dataType:
+          $ref: "#/components/schemas/APropertyDataType"
+        required:
+          type: boolean
+          nullable: true
+        # defaultValue:
+        #   oneOf:
+        #     - type: boolean
+        #     - type: string
+        #     - type: number
+
+    Select:
+      type: object
+      nullable: true
+
+    RelationshipInstance:
+      type: object
+      required:
+        - createdAt
+        - createdBy
+        - from
+        - id
+        - schemaRelationshipId
+        - to
+        - type
+        - updatedAt
+        - updatedBy
+        - values
+        - name
+        - displayName
+      properties:
+        type:
+          type: string
+        from:
+          type: string
+          format: uuid
+        to:
+          type: string
+          format: uuid
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstanceDatum"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: "#/components/schemas/NodeId"
+        updatedBy:
+          $ref: "#/components/schemas/NodeId"
+        schemaRelationshipId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        displayName:
+          type: string
+
+    APropertyDataType:
+      oneOf:
+        - $ref: "./model-service-v2.yml#/components/schemas/SimpleDataType"
+        - $ref: "./model-service-v2.yml#/components/schemas/ComplexDataType"
+
+    ConceptInstance:
+      type: object
+      required:
+        - createdAt
+        - createdBy
+        - id
+        - type
+        - updatedAt
+        - updatedBy
+        - values
+      properties:
+        type:
+          type: string
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstanceDatum"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: "#/components/schemas/NodeId"
+        updatedBy:
+          $ref: "#/components/schemas/NodeId"
+        id:
+          type: string
+          format: uuid
+
+    ModelSummary:
+      type: object
+      required:
+        - count
+        - name
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+          format: int64
+
+    InstanceDatum:
+      type: object
+      required:
+        - conceptTitle
+        - dataType
+        - default
+        - displayName
+        - locked
+        - name
+        - required
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        value:
+          $ref: "#/components/schemas/AnyValue"
+          # Note: not actually true: lists are used with enum + array data typed values:
+          description: Value must be a String, String formatted as a Date, Boolean, Long or
+            Double
+        dataType:
+          $ref: "#/components/schemas/APropertyDataType"
+        required:
+          type: boolean
+        locked:
+          type: boolean
+        default:
+          type: boolean
+        conceptTitle:
+          type: boolean
+
+    IdOrName:
+      type: string
+
+    RelationCount:
+      type: object
+      required:
+        - name
+        - displayName
+        - count
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        count:
+          type: number
+
+    ProxyRelationshipCount:
+      type: object
+      required:
+        - name
+        - displayName
+        - count
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        count:
+          type: integer
+
+    QueryResult:
+      type: object
+      required:
+        - targetValue
+      properties:
+        targetValue:
+          $ref: "#/components/schemas/ConceptInstance"
+
+    GroupCount:
+      type: object
+
+    UnitDimension:
+      type: object
+      required:
+        - dimension
+        - units
+      properties:
+        dimension:
+          type: string
+        units:
+          type: array
+          items:
+            $ref: "#/components/schemas/Unit"
+
+    Unit:
+      type: object
+      required:
+        - name
+        - displayName
+        - description
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string

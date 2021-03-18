@@ -1,0 +1,64 @@
+digraph G {
+  graph [fontname = "courier"];
+  node [fontname = "courier"];
+  edge [fontname = "courier"];
+
+  edge [dir="back"];
+
+  organization [label=":Organization" color="#71747C" fontcolor="#71747C"]
+  dataset [label=":Dataset" color="#71747C" fontcolor="#71747C"]
+
+  patient [ shape=plaintext label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" >
+         <TR><TD>:Model</TD></TR>
+         <TR><TD>name="patient"</TD></TR>
+         </TABLE>>];
+  patient_property_age [label="{:Property|name=\"name\"}"
+                        shape=Mrecord color="#71747C" fontcolor="#71747C"]
+  patient_property_name [label="{:Property|name=\"age\"}"
+                         shape=Mrecord color="#71747C" fontcolor="#71747C"]
+
+  medication [ shape=plaintext label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" >
+         <TR><TD>:Model</TD></TR>
+         <TR><TD>name="medication"</TD></TR>
+         </TABLE>>];
+  medication_property_name [label="{:Property|name=\"age\"}"
+                            shape=Mrecord color="#71747C" fontcolor="#71747C"]
+
+  alice [ shape=plaintext label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" >
+         <TR><TD>:Record</TD></TR>
+         <TR><TD>name="alice"</TD></TR>
+         <TR><TD>age=23</TD></TR>
+         </TABLE>>];
+
+  tylenol [ shape=plaintext label=<
+           <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+           <TR><TD>:Record</TD></TR>
+           <TR><TD>name="tylenol"</TD></TR>
+           </TABLE>>];
+
+  organization -> dataset [label=":IN_ORGANIZATION"]
+  dataset -> patient [label=":IN_DATASET"]
+
+  subgraph cluster_models {
+      style=dashed
+      {rank=same patient medication}
+      patient -> medication [label=<<font color="#e94b4b">:TAKES</font>> dir="forward"]
+  }
+  patient -> patient_property_age [label=":HAS_PROPERTY" dir="forward"]
+  patient -> patient_property_name [label=":HAS_PROPERTY" dir="forward"]
+
+  patient -> alice [label=":BFISA"]
+
+  subgraph cluster_records {
+      style=dashed
+      {rank=same;  alice tylenol}
+      alice -> tylenol [label=<<font color="#e94b4b">:TAKES</font>> dir="forward"]
+  }
+
+  dataset -> medication [label=":IN_DATASET"]
+  medication -> medication_property_name [label=":HAS_PROPERTY" dir="forward"]
+  medication -> tylenol [label=":BFISA"]
+}

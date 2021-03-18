@@ -1,0 +1,2 @@
+~id,~label,$proxyType:String,$externalId:String,$createdAt:Date,$updatedAt:Date,$deleted:String,$datasetId:String,$organizationId:String,$packageId:Long,$packageNodeId:String
+460591a0-8079-4979-a860-c3a4b18a32ad,proxyInstance,Package,N:package:b493794a-1c86-4c18-9fb9-dfdf236b1fe3,2019-11-05T13:44:38.716Z,2019-11-05T13:44:38.716Z,false,N:dataset:b1154216-d1d7-4484-ad18-81b58fb65484,N:organization:c905919f-56f5-43ae-9c2a-8d5d542c133b,184418,N:package:b493794a-1c86-4c18-9fb9-dfdf236b1fe3

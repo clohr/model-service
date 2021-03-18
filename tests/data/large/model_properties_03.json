@@ -1,0 +1,5 @@
+name|display_name|data_type|description
+pursuant|Pursuant|String|Pursuant
+isbn|ISBN|String|Isbn
+file_name|File_name|String|File_name
+soil|SOIL|String|Soil

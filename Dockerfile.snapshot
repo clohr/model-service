@@ -1,0 +1,2 @@
+FROM neo4j:3.5.20
+COPY ./data-snapshot /var/lib/neo4j/data

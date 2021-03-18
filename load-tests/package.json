@@ -1,0 +1,8 @@
+{
+  "name": "load-tests",
+  "version": "1.0.0",
+  "dependencies": {
+    "artillery": "1.6.0-28",
+    "faker": "4.1.0"
+  }
+}

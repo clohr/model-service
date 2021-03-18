@@ -1,0 +1,7 @@
+name|display_name|data_type|description
+promoter|Promoter|String|Promoter
+home|HOME|String|Home
+user|USER|String|User
+jockey|Jockey|String|Jockey
+isbn|ISBN|String|Isbn
+minister|Minister|String|Minister

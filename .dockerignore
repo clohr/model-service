@@ -1,0 +1,16 @@
+.git/
+.gitignore
+
+**/__pycache__
+**/*.egg-info
+**/*.egg/
+**/*.pyc
+**/*.swp
+**/.mypy_cache/
+
+generator/output
+generator/output/*
+plugins/
+loader/ppmi/*
+venv/
+node_modules/

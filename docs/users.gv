@@ -1,0 +1,42 @@
+digraph G {
+  graph [fontname = "courier"];
+  node [fontname = "courier"];
+  edge [fontname = "courier"];
+
+  organization [label=":Organization" color="#71747C" fontcolor="#71747C"]
+  dataset [label=":Dataset" color="#71747C" fontcolor="#71747C"]
+
+  patient [ shape=plaintext  label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" >
+         <TR><TD>:Model</TD></TR>
+         <TR><TD>name="patient"</TD></TR>
+         </TABLE>>];
+
+  alice [ shape=plaintext label=<
+         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" >
+         <TR><TD>:Record</TD></TR>
+         <TR><TD>name="alice"</TD></TR>
+         <TR><TD>age=23</TD></TR>
+         </TABLE>>];
+
+  organization -> dataset [label=":IN_ORGANIZATION" color="#71747C" fontcolor="#71747C" dir="back"]
+  dataset -> patient [label=":IN_DATASET" color="#71747C" fontcolor="#71747C" dir="back"]
+  patient -> alice [label=":BFISA" dir="back"]
+
+  user1 [shape=Mrecord label="{:User|N:user:123}"]
+  user2 [shape=Mrecord label="{:User|N:user:456}"]
+
+  subgraph cluster_users {
+      style=dashed
+      color="#71747C"
+      rank=same
+      user1
+      user2
+  }
+
+  patient -> user1[label=<:CREATED_BY<BR/>(at: 2019-10-03)> color="#1C46BD" fontcolor="#1C46BD"]
+  patient -> user2 [label=<:UPDATED_BY<BR/>(at: 2019-10-04)> color="#1C46BD" fontcolor="#1C46BD"]
+
+  alice -> user1 [label=<:CREATED_BY<BR/>(at: 2019-10-04)> color="#1C46BD" fontcolor="#1C46BD"]
+  alice -> user1 [label=<:UPDATED_BY<BR/>(at: 2019-10-05)> color="#1C46BD" fontcolor="#1C46BD"]
+ }

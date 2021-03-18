@@ -1,0 +1,8 @@
+name|display_name|data_type|description
+university|University|String|University
+isbn|ISBN|String|Isbn
+soil|SOIL|String|Soil
+chemical_element|Chemical_element|String|Chemical_element
+age|AGE|Long|Age
+vin|VIN|String|Vin
+another|Another|String|Another

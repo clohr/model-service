@@ -1,0 +1,21 @@
+openapi: '3.0.0'
+info:
+  title: 'Model Service'
+  version: '1.0.0'
+
+servers:
+  - url: https://api.pennsieve.io/models
+  - url: https://api.pennsieve.net/models
+
+paths:
+  '/health':
+    get:
+      tags:
+        - Health
+      security: []
+      summary: 'Ensure the service is responding to requests'
+      description: 'Ensure the service is responding to requests'
+      operationId: server.api.health.get_health
+      responses:
+        '200':
+          description: Success

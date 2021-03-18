@@ -1,0 +1,111 @@
+version: "3.7"
+services:
+  neo4j:
+    image: "neo4j:3.5.20"
+    deploy:
+      resources:
+        limits:
+          memory: 8gb
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./plugins:/plugins
+    env_file:
+      - ./test.env
+
+  neo4j-with-volume:
+    image: "neo4j:3.5.20"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./plugins:/plugins
+      - ./data:/data
+    env_file:
+      - ./test.env
+
+  neo4j-ppmi:
+    image: "pennsieve/neo4j-ppmi:latest"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./plugins:/plugins
+    env_file:
+      - ./test.env
+
+  data-loader:
+    build:
+      context: .
+      dockerfile: ./loader/Dockerfile
+    environment:
+      - PENNSIEVE_API_TOKEN
+      - PENNSIEVE_API_SECRET
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - DATASET_NAME
+      - LOG_LEVEL
+      - USE_CACHE=0
+      # - S3_DATA_BUCKET # This is defined in test.env
+    env_file:
+      - ./test.env
+    depends_on:
+      - "neo4j"
+    entrypoint: "./wait-for-it.sh -t 60 neo4j:7687 -- python ./import_to_neo4j.py --dataset=$DATASET_NAME --cache=$USE_CACHE"
+
+  # Container with no ports exposed to the host for use on Jenkins
+  neo4j-ci:
+    image: "neo4j:3.5.20"
+    env_file:
+      - ./test.env
+    volumes:
+      # See https://community.neo4j.com/t/neo4j-db-3-5-docker-error/9913/7
+      - ./plugins:/plugins
+      - ./data:/var/lib/neo4j/data
+      - ./conf:/var/lib/neo4j/conf
+
+  model-service-test:
+    image: pennsieve/model-service-test:${IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+      args:
+        - PENNSIEVE_NEXUS_USER
+        - PENNSIEVE_NEXUS_PW
+    environment:
+      - NEO4J_BOLT_URL=bolt://neo4j-ci:7687
+    depends_on:
+      - neo4j-ci
+    entrypoint: "./wait-for-it.sh -t 60 neo4j-ci:7687 -- pytest -s -v --skip-integration tests"
+
+  model-service-lint:
+    image: pennsieve/model-service-test:${IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+      args:
+        - PENNSIEVE_NEXUS_USER
+        - PENNSIEVE_NEXUS_PW
+    entrypoint: "sh -c 'make typecheck && make lint'"
+
+  model-service:
+    image: pennsieve/model-service:${IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: service
+      args:
+        - PENNSIEVE_NEXUS_USER
+        - PENNSIEVE_NEXUS_PW
+
+  model-publish:
+    image: pennsieve/model-publish:${IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: publish
+      args:
+        - PENNSIEVE_NEXUS_USER
+        - PENNSIEVE_NEXUS_PW

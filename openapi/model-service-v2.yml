@@ -1,0 +1,2130 @@
+openapi: '3.0.0'
+info:
+  title: 'Model Service'
+  description: 'Model Service v2 API - This API is under active development and subject to change.'
+  version: '0.0.1'
+
+servers:
+  - url: https://api.pennsieve.io/models/v2
+  - url: https://api.pennsieve.net/models/v2
+
+paths:
+  '/organizations/{organizationId}/datasets/{datasetId}/models':
+    post:
+      tags:
+        - Models
+      summary: 'Create a new model'
+      description: 'Create a new model'
+      operationId: server.api.v2.models.create_model
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+      requestBody:
+        description: Model to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModel'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+      security:
+        - Bearer: []
+    get:
+      tags:
+        - Models
+      summary: 'Get all the models for a dataset'
+      description: 'Get all the models for a dataset'
+      operationId: server.api.v2.models.get_all_models
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Model'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelIdOrName}':
+    get:
+      tags:
+        - Models
+      summary: 'Gets a model by ID'
+      description: 'Gets a model by ID'
+      operationId: server.api.v2.models.get_model
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+      security:
+        - Bearer: []
+
+    put:
+      tags:
+        - Models
+      summary: 'Update a model'
+      description: 'Update a model'
+      operationId: server.api.v2.models.update_model
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModel'
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Model"
+      security:
+        - Bearer: []
+
+    delete:
+      tags:
+        - Models
+      summary: 'Delete a model'
+      description: 'Delete a model'
+      operationId: server.api.v2.models.delete_model
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      responses:
+        "200":
+          description: successful operation
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelIdOrName}/properties':
+    get:
+      tags:
+        - Models
+      summary: 'Get all the properties for a model'
+      description: 'Get all the properties for a model'
+      operationId: server.api.v2.models.get_all_properties
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Models
+      summary: 'Create or update or the properties for a model'
+      description: 'Create or update or the properties for a model'
+      operationId: server.api.v2.models.update_properties
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateProperties'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelId}/properties/{propertyName}':
+    delete:
+      tags:
+        - Models
+      summary: 'Delete a model property'
+      description: 'Delete a model property'
+      operationId: server.api.v2.models.delete_property
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelId
+          in: path
+          description: Model ID
+          required: true
+          schema:
+            type: string
+        - name: propertyName
+          in: path
+          description: Property name
+          required: true
+          schema:
+            type: string
+        - name: modifyRecords
+          in: query
+          description: Whether or not to modify existing records by removing this property
+          required: false
+          schema:
+            type: boolean
+            default: False
+      responses:
+        '200':
+          description: successful operation
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelIdOrName}/records':
+    get:
+      tags:
+        - Records
+      summary: 'Get all records with the given model ID'
+      description: 'Get all records with the given model ID'
+      operationId: server.api.v2.records.get_all_records
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset Id
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 100
+        - name: linked
+          in: query
+          description: Enable embedding linked records in the returned records.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: next_page
+          in: query
+          description: next_page
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResult'
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Records
+      summary: 'Create a new record'
+      description: 'Create a new record'
+      operationId: server.api.v2.records.create_record
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      requestBody:
+        description: Record to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyValuesPayload'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelIdOrName}/records/batch':
+    post:
+      tags:
+        - Records
+      summary: 'Create multiple records'
+      description: 'Create multiple records'
+      operationId: server.api.v2.records.create_records
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      requestBody:
+        description: Records to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PropertyValuesPayload'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Record'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}':
+    get:
+      tags:
+        - Records
+      summary: 'Get a record by ID'
+      description: 'Get a record by ID'
+      operationId: server.api.v2.records.get_record
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordIdentifier'
+        - name: linked
+          in: query
+          description: Enable embedding linked records in the returned record.
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Records
+      summary: 'Updates the record with the given ID'
+      description: 'Updates the record with the given ID'
+      operationId: server.api.v2.records.update_record
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordIdentifier'
+      requestBody:
+        description: Record to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyValuesPayload'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Records
+      summary: 'Deletes a record'
+      description: 'Deletes a record'
+      operationId: server.api.v2.records.delete_record
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          # schema:
+          #   $ref: '#/components/schemas/Record'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}/packages':
+    get:
+      tags:
+        - Packages
+      summary: 'Create a proxy for a package'
+      description: 'Create a proxy for a package'
+      operationId: server.api.v2.records.get_all_package_proxies
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordIdentifier'
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageProxyPage'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}/packages/{packageId}':
+    post:
+      tags:
+        - Packages
+      # summary: 'Get all proxy packages for a record'
+      # description: 'Get all proxy packages for a record'
+      operationId: server.api.v2.records.create_package_proxy
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordIdentifier'
+        - name: packageId
+          in: path
+          description: Package ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/PackageIdentifier'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageProxy'
+      security:
+        - Bearer: []
+
+    delete:
+      tags:
+        - Packages
+      summary: 'Delete a package proxy'
+      description: 'Delete a package proxy'
+      operationId: server.api.v2.records.delete_package_proxy
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordIdentifier'
+        - name: packageId
+          in: path
+          description: Package ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/PackageIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageProxy'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelIdOrName}/relationships':
+    get:
+      tags:
+        - Models
+        - Relationships
+      summary: 'Get all outgoing relationships for given model'
+      description: 'Get all outgoing relationships for given model'
+      operationId: server.api.v2.models.get_relationships
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelRelationship'
+      security:
+        - Bearer: []
+
+    post:
+      tags:
+        - Models
+        - Relationships
+      summary: 'Create a new model relationship'
+      description: 'Create a new model relationship'
+      operationId: server.api.v2.models.create_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+      requestBody:
+        description: The model relationship to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModelRelationship'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelRelationship'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/models/{modelIdOrName}/relationships/{relationshipId}':
+    get:
+      tags:
+        - Models
+        - Relationships
+      summary: 'Get all outgoing relationships for given model'
+      description: 'Get all outgoing relationships for given model'
+      operationId: server.api.v2.models.get_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+        - name: relationshipId
+          in: path
+          description: Relationship ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RelationshipIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelRelationship'
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Models
+        - Relationships
+      summary: 'Update a model relationship'
+      description: 'Update a model relationship'
+      operationId: server.api.v2.models.update_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+        - name: relationshipId
+          in: path
+          description: Relationship ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RelationshipIdentifier'
+      requestBody:
+        description: The model relationship to be updated.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateModelRelationship'
+      responses:
+          '200':
+            description: successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ModelRelationship'
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Models
+        - Relationships
+      summary: 'Delete a model relationship'
+      description: 'Delete a model relationship'
+      operationId: server.api.v2.models.delete_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelIdOrName
+          in: path
+          description: Model ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+        - name: relationshipId
+          in: path
+          description: Relationship ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/RelationshipIdentifier'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - Bearer: []
+
+  # '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}/relationships/{relationshipType}':
+  #   get:
+  #     summary: Get all outgoing relations from a record.
+  #     description: Get all outgoing relations from a record.
+  #     operationId: server.api.v2.records.get_relationships
+  #     parameters:
+  #       - name: organizationId
+  #         in: path
+  #         description: Organization ID
+  #         required: true
+  #         schema:
+  #           $ref: '#/components/schemas/OrganizationIdentifier'
+  #             - name: datasetId
+  #         in: path
+  #         description: Dataset Id
+  #         required: true
+  #         schema:
+  #           $ref: '#/components/schemas/DatasetIdentifier'
+  #       - name: recordId
+  #         in: path
+  #         description: record Id
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: relationshipType
+  #         in: path
+  #         description: relation type
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       '200':
+  #         description: successful operation
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/RecordRelationship'
+  #     security:
+  #       - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}/relationships':
+    get:
+      tags:
+        - Records
+        - Relationships
+      summary: 'Get all outgoing relations from a record'
+      description: 'Get all outgoing relations from a record'
+      operationId: server.api.v2.records.get_relationships
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecordRelationship'
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Records
+        - Relationships
+      summary: 'Create a relationship between records'
+      description: 'Create a relationship between records'
+      operationId: server.api.v2.records.create_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: The record relationship to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecordRelationship'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordRelationship'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}/relationships/{relationshipId}':
+    get:
+      tags:
+        - Records
+        - Relationships
+      summary: 'Get an outgoing record relationship from a record'
+      description: 'Get an outgoing record relationship from a record'
+      operationId: server.api.v2.records.get_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: relationshipId
+          in: path
+          description: Relation ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordRelationship'
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Records
+        - Relationships
+      summary: 'Delete an outgoing relationship from a record'
+      description: 'Delete an outgoing relationship from a record'
+      operationId: server.api.v2.records.delete_relationship
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: relationshipId
+          in: path
+          description: Relation ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/records/{recordId}/relationships/delete':
+    post:
+      tags:
+        - Records
+        - Relationships
+      summary: 'Batch delete outgoing relationships from a record'
+      description: 'Batch delete outgoing relationships from a record'
+      operationId: server.api.v2.records.delete_relationships
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: recordId
+          in: path
+          description: Record ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: The record relationships to be deleted
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BatchDeleteResult'
+        '207':
+          description: partially successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BatchDeleteResult'
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BatchDeleteResult'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/datasets/{datasetId}/query/{sourceModelIdOrName}':
+    post:
+      tags:
+        - Query
+      summary: 'Construct a query across models'
+      description: 'Construct a query across models'
+      operationId: server.api.v2.query.run
+      parameters:
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: path
+          description: Dataset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: sourceModelIdOrName
+          in: path
+          description: Source Model ID or name
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelIdentifier'
+        - name: linked
+          in: query
+          description: Enable embedding linked records in the returned records.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: The number of results to return from a query
+          required: false
+          schema:
+            type: integer
+            default: 25
+        - name: offset
+          in: query
+          description: Skip ahead some number of results
+          required: false
+          schema:
+            type: integer
+            default: 0
+      requestBody:
+        description: The query to run.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserQuery'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Record'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/search/records':
+    post:
+      tags:
+        - Search
+      summary: 'Search records across datasets'
+      operationId: server.api.v2.search.records
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 25
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: orderBy
+          in: query
+          description: Order by property
+          required: false
+          schema:
+            type: string
+            maxLength: 32
+            nullable: true
+        - name: orderDirection
+          in: query
+          description: Order by direction
+          required: false
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+            default: "asc"
+      requestBody:
+        description: The search request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordSearchResult'
+      security:
+        - Bearer: []
+
+
+  '/organizations/{organizationId}/search/packages':
+    post:
+      tags:
+        - Search
+      summary: 'Search records across datasets, return packages'
+      operationId: server.api.v2.search.packages
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 25
+        - name: offset
+          in: query
+          description: offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+      requestBody:
+        description: The search request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageSearchResult'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/autocomplete/models':
+    get:
+      tags:
+        - Search
+      summary: 'Get all models the user has access to across datasets.'
+      operationId: server.api.v2.search.autocomplete_models
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: query
+          description: Dataset ID
+          required: false
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: relatedTo
+          in: query
+          description: Model name
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - models
+                properties:
+                  models:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SuggestedDatasetModel'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/autocomplete/models/{modelName}':
+    get:
+      tags:
+        - Search
+      summary: 'Get properties belonging to the given model across datasets.'
+      operationId: server.api.v2.search.autocomplete_model_properties
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: datasetId
+          in: query
+          description: Dataset ID
+          required: false
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: modelName
+          in: path
+          description: Model name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SuggestedModelProperty'
+      security:
+        - Bearer: []
+
+  '/organizations/{organizationId}/autocomplete/{modelName}/{propertyName}/values':
+    get:
+      tags:
+        - Search
+      summary: 'Get values for a given property.'
+      operationId: server.api.v2.search.autocomplete_model_property_values
+      parameters:
+        - name: X-Bf-Trace-Id
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: organizationId
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrganizationIdentifier'
+        - name: modelName
+          in: path
+          description: Model name
+          required: true
+          schema:
+            type: string
+        - name: propertyName
+          in: path
+          description: Model property
+          required: true
+          schema:
+            $ref: '#/components/schemas/ModelPropertyIdentifier'
+        - name: datasetId
+          in: query
+          description: Dataset ID
+          required: false
+          schema:
+            $ref: '#/components/schemas/DatasetIdentifier'
+        - name: prefix
+          in: query
+          description: Match values starting with this
+          required: false
+          schema:
+            type: string
+        - name: unit
+          in: query
+          description: Match values of this unit
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Result limit
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SuggestedValues'
+      security:
+        - Bearer: []
+
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: server.auth.decode_token
+
+  schemas:
+    OrganizationIdentifier:
+      type: integer
+
+    OrganizationNodeOrIntIdentifier:
+      type: string
+
+    DatasetIdentifier:
+      type: integer
+
+    DatasetNodeOrIntIdentifier:
+      type: string
+
+    ModelIdentifier:
+      type: string  # UUID or name
+
+    ModelPropertyIdentifier:
+      type: string
+
+    RecordIdentifier:
+      type: string
+      format: uuid
+
+    RelationshipIdentifier:
+      type: string
+      format: uuid
+
+    PackageIdentifier:
+      type: string  # Node ID
+
+    SimpleDataType:
+      type: string
+
+    ComplexDataType:
+      type: object
+
+    DataType:
+      oneOf:
+        - $ref: '#/components/schemas/SimpleDataType'
+        - $ref: '#/components/schemas/ComplexDataType'
+
+    GraphValue:
+      anyOf:
+        - type: boolean
+          nullable: true
+        - type: array
+          items:
+            type: boolean
+          nullable: true
+        - type: string
+          nullable: true
+        - type: array
+          items:
+            type: string
+          nullable: true
+        - type: number
+          nullable: true
+        - type: array
+          items:
+            type: number
+          nullable: true
+
+    Model:
+      type: object
+      required:
+        - id
+        - createdAt
+        - description
+        - displayName
+        - name
+        - updatedAt
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+          format: uuid
+        count:
+          type: integer
+          format: int64
+        propertyCount:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateModel:
+      type: object
+      required:
+        - name
+        - displayName
+        - description
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+
+    Property:
+      type: object
+      required:
+        - name
+        - displayName
+        - dataType
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        displayName:
+          type: string
+        dataType:
+          $ref: '#/components/schemas/DataType'
+        index:
+          type: integer
+          format: int64
+        locked:
+          type: boolean
+        default:
+          type: boolean
+        modelTitle:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        description:
+          type: string
+        required:
+          type: boolean
+          default: false
+
+    CreateOrUpdateProperties:
+      type: array
+      items:
+        allOf:
+          - $ref: '#/components/schemas/Property'
+          - type: object
+            required:
+              # - id
+              - name
+              - displayName
+              - dataType
+
+    PropertyValuesPayload:
+      type: object
+      required:
+        - values
+      properties:
+        values:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/GraphValue'
+
+    RecordStub:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          nullable: true
+
+    Record:
+      type: object
+      required:
+        - id
+        - values
+        - createdAt
+        - updatedAt
+      properties:
+        type:
+          type: string
+        values:
+          type: object
+          additionalProperties:
+            anyOf:
+              - $ref: '#/components/schemas/GraphValue'
+              - $ref: '#/components/schemas/RecordStub'
+                nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        id:
+          type: string
+          format: uuid
+
+    PagedResult:
+      type: object
+      required:
+        - results
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Record'
+        nextPage:
+          type: number
+          nullable: true
+
+    ModelRelationship:
+      type: object
+      required:
+        - id
+        - oneToMany
+        - displayName
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        oneToMany:
+          type: boolean
+        displayName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateModelRelationship:
+      type: object
+      required:
+        - type
+        - to
+        - oneToMany
+      properties:
+        "type":
+          type: string
+        to:
+          type: string
+          format: uuid
+        oneToMany:
+          type: boolean
+          default: True
+        displayName:
+          type: string
+          default: ""
+
+    UpdateModelRelationship:
+      type: object
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+
+    RecordRelationship:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    CreateRecordRelationship:
+      type: object
+      required:
+        - "type"
+        - to
+      properties:
+        "type":
+          type: string
+        to:
+          type: string
+          format: uuid
+
+    Predicate:
+      type: object
+      required:
+        - model
+        - field
+        - op
+        - argument
+      properties:
+        model:
+          $ref: '#/components/schemas/ModelIdentifier'
+        field:
+          type: string
+        op:
+          type: string
+          enum: ["=", "<", "<=", ">", ">=", "STARTS WITH", "CONTAINS", "IS"]
+        argument:
+          oneOf:
+            - type: boolean
+            - type: string
+            - type: number
+        negate:
+          type: boolean
+          default: false
+
+    UserQuery:
+      type: object
+      required:
+        - filters
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Predicate'
+
+    PackageProxy:
+      type: object
+      required:
+        - id
+        - packageId
+        - packageNodeId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        packageId:
+          type: number
+        packageNodeId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PackageProxyPage:
+      type: object
+      required:
+        - limit
+        - offset
+        - packages
+        - totalCount
+      properties:
+        limit:
+          type: number
+        offset:
+          type: number
+        totalCount:
+          type: number
+        packages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageProxy'
+
+    DatasetLocation:
+      type: object
+      required:
+        - service
+      properties:
+        service:
+          type: string
+          enum:
+            - neo4j
+            - neptune
+
+    SearchRequest:
+      type: object
+      required:
+        - model
+        - filters
+      properties:
+        model:
+          type: string
+        datasets:
+          type: array
+          items:
+            type: integer
+            format: int32
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyFilter'
+
+    PropertyFilter:
+      type: object
+      required:
+        - model
+        - property
+        - operator
+        - value
+      properties:
+        model:
+          type: string
+        property:
+          type: string
+        value:
+          oneOf:
+            - type: boolean
+            - type: string
+            - type: number
+        operator:
+          type: string
+          enum: ["=", "<>", "<", "<=", ">", ">=", "STARTS WITH", "CONTAINS", "IS"]
+        unit:
+          type: string
+
+    RecordSearchResult:
+      type: object
+      required:
+        - models
+        - records
+        - totalCount
+        - limit
+        - offset
+      properties:
+        models:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultModelStub'
+        records:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Record'
+              - type: object
+                required:
+                  - modelId
+                properties:
+                  modelId:
+                    type: string
+                    format: uuid
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+
+    SearchResultModelStub:
+      type: object
+      required:
+        - id
+        - properties
+        - dataset
+      properties:
+        id:
+          type: string
+          format: uuid
+        dataset:
+          $ref: '#/components/schemas/Dataset'
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+
+    Dataset:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+        nodeId:
+          type: string
+          nullable: true
+
+    BatchDeleteResult:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: integer
+          format: int32
+
+    SuggestedDatasetModel:
+      type: object
+      required:
+        - name
+        - displayName
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+
+    SuggestedModelProperty:
+      type: object
+      required:
+        - name
+        - displayName
+        - dataType
+        - operators
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        dataType:
+          $ref: '#/components/schemas/DataType'
+        operators:
+          type: array
+          items:
+            type: string
+
+    SuggestedValues:
+      type: object
+      required:
+        - property
+        - values
+      properties:
+        property:
+          $ref: '#/components/schemas/SuggestedModelProperty'
+        values:
+          type: array
+          items:
+            oneOf:
+              - type: boolean
+              - type: string
+              - type: number
+
+    PackageSearchResult:
+      type: object
+      required:
+        - packages
+        - totalCount
+        - limit
+        - offset
+      properties:
+        packages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageDTO'
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        totalCount:
+          type: integer
+          format: int32
+
+    PackageDTO:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: object

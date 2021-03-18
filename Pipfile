@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+black = "*"
+connexion = "==2.3.0"
+swagger-ui-bundle = "*"
+waitress = "*"
+boto3 = "*"
+audit-middleware = ">=0.2.5"
+auth-middleware = ">=4.0.2"
+pytest = "*"
+neo4j = "==1.7.6"
+pre-commit = "*"
+mypy = "*"
+dataclasses-json = "*"
+marshmallow = "==3.0.0"
+structlog = "*"
+newrelic = "*"
+mimesis = "==3.3.0"
+py-spy = "==0.1.11"
+Flask = "*"
+
+[requires]
+python_version = "3.7"

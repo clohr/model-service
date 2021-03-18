@@ -1,0 +1,235 @@
+#!/usr/bin/env node
+
+const http = require('http')
+const https = require('https')
+
+PROXY_PORT = 9090
+API_HOST = process.env["API_HOST"] || "dev.pennsieve.io"
+MODEL_SERVICE_HOST = process.env["MODEL_SERVICE_HOST"] || "localhost:8080"
+PASSTHROUGH = "PASSTHROUGH" in process.env
+
+const SERVER_CERT = `
+-----BEGIN CERTIFICATE-----
+MIICljCCAX4CCQCT36imfDaTLjANBgkqhkiG9w0BAQsFADANMQswCQYDVQQGEwJV
+UzAeFw0xOTA5MzAyMDMxMzNaFw0xOTEwMzAyMDMxMzNaMA0xCzAJBgNVBAYTAlVT
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu3/Y3S+Dsq5mRTvsnASy
+EFcNhC+aUaJKGpsAWe7JwjKisO2ENYaA3CylHsHh3FRxk/C4XskSe+35uo3LC4I4
+GRniqslwkJHgB7ECOgJpCrhtzFK0OrzYNEF8WTZ1Nah7CjVt8dQVVxLpcmemE8A6
+QXiNhWh1TKhgWpKqrAYA7734PGyKbMeDkwLE/i6/wZwp8+1BSfNmuzlEC9VqHTyk
+qPKZ1VTzo65s9FSkJpQEDFcoRcBKZR4UtQKxff7LNX63gIFzESnMmsv10T2aHe+s
+JiOu+ZgHr8/mdMnM0MXFnxcxms671n2LPCeu2bdUGBX4VzLsyc2nKQSCO2jgb4wR
+owIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQANzJUXSNRUJ9S2FhsfoWu9qzFbSLWe
+J/pFlDN0YKYG4j45ddWgCThuMrTKQTpmcRqwyH+m4rpTiTXotXoOOcDICo3pz7bW
+aRlpM8+mAJKmhShROTs6JJFryKvZH9X8EPUgKkJlmSXqh25zGVP2Ycz73oYYsHK2
+J+Dj7F1HOn2mh5X+AvM1pfvufdiCEy1nBVzpCGx17XGqCCKE09PVKRPIvxFBUafw
+2ioW13YB5UYx2UE02CneDCLxtp7FWGD0+SmRPdN2UoW4XHUT7lWAWRaXI0twf3Cc
+h2bTUknsKln+kjFLxJYutwLJbLjT8mEjr6NAveOMIFe7OEYOWfV3Soxc
+-----END CERTIFICATE-----
+`
+
+const SERVER_KEY = `
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7f9jdL4OyrmZF
+O+ycBLIQVw2EL5pRokoamwBZ7snCMqKw7YQ1hoDcLKUeweHcVHGT8LheyRJ77fm6
+jcsLgjgZGeKqyXCQkeAHsQI6AmkKuG3MUrQ6vNg0QXxZNnU1qHsKNW3x1BVXEuly
+Z6YTwDpBeI2FaHVMqGBakqqsBgDvvfg8bIpsx4OTAsT+Lr/BnCnz7UFJ82a7OUQL
+1WodPKSo8pnVVPOjrmz0VKQmlAQMVyhFwEplHhS1ArF9/ss1freAgXMRKcyay/XR
+PZod76wmI675mAevz+Z0yczQxcWfFzGazrvWfYs8J67Zt1QYFfhXMuzJzacpBII7
+aOBvjBGjAgMBAAECggEBAJ+70uzcRb47hTUGUBS6i1gQUZuDUlypfagc1LfJDmk6
+6g8AydkvtSfdgO4rDle+OORn9yoI8o5RtqaPlaNAVLpNqyUEZ7lCDTGAQv1YgFR5
+ulCPRKulpisefukh08jat7eCvR+AJo3/tpGYa4v3/6k3Ipm82/FqoGuI942Fr9aM
+81ndMdC6PhkCQT6FJWswWEkrwiKUUmtak/XPqt21++kmmLeTTZ229gtVzm9wW4Kp
+OrAZry91CwQhKgEQSHljp3gBf0vINPC7RJH5+3OW7WVH/3+H/TFhGVNJdlmStB3M
+27EX+IWALnoIMbcM/w03qv3IHWEW/1D68c3yu5PByMECgYEA24D73hitt0JntXfl
+zB33qP6nqa8BWn4eP6720HaR+kxI+O6/e630oUjuWmCTkA96koWY/vSgiPsAWwvA
+Pc7iP7Tfpw3kIeG5VIhqYvDumWnsean1e2uRyH9vogOrttw5qDt7Th6B+9gx3ctC
+vGoCpKcxscWwnzoXUyA0+I7+3N8CgYEA2qyeSbz9vf6CzcmtHFqoHojlb1YswH4x
+NmT/BgUnfC8XvNxCB/d3Ki/pfVw3yrm/4CJwlmk+qZR2/kpccNF7afyGJG13n61x
+nFhZE/kEANC7iHhajqUEJdyK8jAQRjilJn0OykcS6HFkSLcDQWUfNfNWdrpdEzHS
+uVFlrO/cH70CgYBiHV93wPQ1TBtrQ/KVsHd5NIrhD/a86k6/DIgKWlWZ2etsSduR
+fwov5ZeVEkIjTKfvQoRGwjXXxMo96BzAA++hpkmqNE1az7i1jlxvaV5deLlZEJ1H
+06dQRZYyhw2EKSAkkKHnIz/awKJZj3d/HKudyZYu7jyqj57Ja0YCLHjDZQKBgBly
+210DhJg25Wwjm2TgXA5pqiHh6oVgakPFTzSZJvY52M5e58RblV+wgcDYGZobMexY
+tbebefJsV8jSSJ3Mk0tLWyUkJDbODZm/YmaDpWae5CRGtWtCYxAw8W6sD0jM0NOA
+3FbIHLg2chBQVC2pIg+6SQa6O5i/RKHSij2tEHYVAoGAWKKlDhgBasKpQAb8/Z9M
+NDCLMeTaxnnQ7qH0hZDl6MUSNJlblwldQD+CFAgxSy0UGIk74zAbs5fzBLq1toWY
+fgGMf0mbGQkD0B0KfMnnSmLZTlLGyHAt/6ig0JGgx3xTW0+9ClTia5Lhru5ELYut
+u3mo5XUMuqcrCnxTyxwB26c=
+-----END PRIVATE KEY-----
+`
+
+console.log(`
+*******************************************************************************
+*
+* In model-service:
+*
+*   $ assume-role non-prod admin
+*   $ export JWT_SECRET_KEY=$(aws ssm get-parameter --with-decryption --output=text --query Parameter.Value --name /dev/model-service/jwt-secret-key)
+*   $ PENNSIEVE_API_HOST=dev-api-use1.pennsieve.net python main.py --port=8080
+*   $ API_HOST=dev.pennsieve.net bin/model-service-local-proxy
+*
+* In pennsieve-python:
+*
+*   $ PENNSIEVE_API_LOC=https://localhost:9090 pytest tests/test_concepts.py -k test_get_related_models -s
+*
+*******************************************************************************
+`)
+
+
+const options = {
+  key: SERVER_KEY,
+  cert: SERVER_CERT
+}
+
+let sessionToken = undefined
+let log = true
+
+// ----------------------------------------------------------------------------
+
+function trimPrefix(str, prefix) {
+    if (str.startsWith(prefix)) {
+        return str.slice(prefix.length)
+    } else {
+        return str
+    }
+}
+
+function getSessionToken(data) {
+  try {
+    json = JSON.parse(data)
+    if (json["session_token"]) {
+      return json["session_token"]
+    }
+  } catch (e) { }
+  return undefined
+}
+
+function getDataset(url) {
+  const re = new RegExp("datasets\/([^\/]+)", "g")
+  return decodeURIComponent(re.exec(url)[1])
+}
+
+function getJWT(sessionToken, dataset) {
+  return new Promise((resolve, reject) => {
+    const req = https.get({
+      headers: {"Authorization": `Bearer ${sessionToken}`, "X-Original-URI": "placerholder"},
+      host: "dev-authorization-service-use1.pennsieve.net",
+      path: `/authorization?dataset_id=${dataset}`
+    })
+    req.on('response', res => {
+      const token = trimPrefix(res.headers["authorization"], "Bearer").trim()
+      //console.log(`*** Got token = ${token}`)
+      resolve(token)
+    })
+    req.on('error', err => {
+      reject(err)
+    });
+  })
+}
+
+async function routeRequest(request) {
+  const headers = request.headers
+  const method = request.method
+  let path = request.url
+  let use_host = undefined
+  let port = undefined
+  let dataset = undefined
+  let is_model_service = false
+
+  const modelService = new RegExp("^\/models(.+)", "g")
+  const match = modelService.exec(request.url)
+  let use_https = true
+
+  if (match && !PASSTHROUGH) {
+    const parts = MODEL_SERVICE_HOST.split(":")
+    if (parts.length >= 2) {
+      use_host = parts[0]
+      port = parts[1]
+    } else {
+      use_host = MODEL_SERVICE_HOST
+    }
+
+    dataset = getDataset(match[0])
+    if (!sessionToken) {
+      throw new Error(`no session token`)
+    }
+
+    const jwt = await getJWT(sessionToken, dataset)
+
+    path = `/v1${match[1]}`
+    use_https = false
+    headers['authorization'] = `Bearer ${jwt}`
+    is_model_service = true
+  } else {
+    use_host = API_HOST
+    path = request.url
+  }
+  headers['host'] = use_host
+
+  return [{
+    hostname: use_host,
+    method,
+    path,
+    port,
+    headers
+  }, use_https, dataset, is_model_service]
+}
+
+// ----------------------------------------------------------------------------
+
+const server = https.createServer(options, async function (request, response) {
+  const [opts, use_https, dataset, is_model_service] = await routeRequest(request)
+
+  log = is_model_service
+
+  if (log) {
+    console.log(`REQUEST (https=${use_https}) \n\t${request.method} ${request.headers['host']}${request.url} ->\n\t${opts.method} ${opts.hostname}${opts.path}`)
+  }
+
+  const req = (use_https ? https : http).request(opts, (res) => {
+    console.log(`RESPONSE\n\t${opts.method} ${opts.hostname}${opts.path} = ${res.statusCode}\n`)
+    response.writeHead(res.statusCode, res.headers)
+
+    res.on('data', (data) => {
+      if (log) {
+        console.log(`----RESPONSE:DATA => `, data.toString('utf8'))
+      }
+
+      const maybeSession = getSessionToken(data)
+      if (maybeSession) {
+        sessionToken = maybeSession
+      }
+
+      response.write(data)
+    })
+    res.on('end', (data) => {
+      if (data && log) {
+        console.log(`----RESPONSE:DATA (END) => `, data.toString('utf8'))
+      }
+      response.end(data)
+    })
+  })
+
+  request.on('data', (data) => {
+    if (log) {
+      console.log(`----REQUEST:DATA => `, data.toString('utf8'))
+    }
+    req.write(data)
+  })
+  request.on('end', (data) => {
+    if (data && log) {
+      console.log(`----REQUEST:DATA (END) => `, data.toString('utf8'))
+    }
+    req.end(data)
+  })
+})
+
+// ----------------------------------------------------------------------------
+
+server.on('connect', (req) => {
+  console.log(`connect : ${req.url}`)
+})
+
+server.listen(PROXY_PORT)
+
+console.log(`-- Ready on 0.0.0.0:${PROXY_PORT} --`)

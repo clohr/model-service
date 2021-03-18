@@ -1,0 +1,29 @@
+[
+  {
+    "name": "model-publish",
+    "image": "${model_publish_image_url}:${image_tag}",
+    "repositoryCredentials": {
+      "credentialsParameter": "${docker_hub_credentials}"
+    },
+    "environment": [
+      { "name" : "ENVIRONMENT", "value": "${environment_name}" },
+      { "name" : "CLOUDWRAP_ENVIRONMENT", "value": "${environment_name}" },
+      { "name" : "NEO4J_BOLT_URL", "value": "${neo4j_bolt_url}" }
+    ],
+    "secrets": [
+      { "name" : "NEO4J_BOLT_USER", "valueFrom": "${neo4j_bolt_user_arn}" },
+      { "name" : "NEO4J_BOLT_PASSWORD", "valueFrom": "${neo4j_bolt_password_arn}" }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${cloudwatch_log_group_name}",
+        "awslogs-region": "${aws_region}",
+        "awslogs-stream-prefix": "${model_publish_stream_prefix}"
+      }
+    },
+    "mountPoints": [
+      ${mount_points}
+    ]
+  }
+]

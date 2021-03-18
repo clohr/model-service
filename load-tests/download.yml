@@ -1,0 +1,29 @@
+config:
+  target: 'http://localhost:8080'
+  phases:
+    - duration: 1
+      arrivalRate: 1
+  ensure:
+    maxErrorRate: 1
+  variables:
+    datasetId: "1"
+    modelId: "{{ $processEnvironment.MODEL_ID }}"
+    limit: 1000
+    next_page: 0
+    count: 100
+  defaults:
+    headers:
+      Authorization: "Bearer {{ $processEnvironment.JWT }}"
+  processor: "./functions.js"
+
+scenarios:
+  - name: "Download records"
+    flow:
+      - loop:
+          - get:
+              url: "/v2/datasets/{{ datasetId }}/models/{{ modelId }}/records?limit={{ limit }}&next_page={{ next_page }}"
+              capture:
+                json: "$.nextPage"
+                as: "response_next_page"
+              afterResponse: "setNextPage"
+        count: "{{ count }}"

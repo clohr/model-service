@@ -1,0 +1,13 @@
+cryptography
+black==20.8b1
+regex
+isort<5.0.0
+pre-commit
+mypy>=0.790
+pytest==5.1.2
+py-spy==0.1.11
+blackfynn
+sqlalchemy
+psycopg2
+moto[all]==1.3.16
+docker
