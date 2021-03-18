@@ -266,13 +266,13 @@ def publish_schema(
     schema_output_file = OutputFile.json_for_schema().with_prefix(
         os.path.join(config.s3_publish_key, METADATA)
     )
-    s3.put_object(
+    response = s3.put_object(
         Bucket=config.s3_bucket,
         Key=str(schema_output_file),
         Body=schema.to_json(camel_case=True, pretty_print=True, drop_nulls=True),
     )
     schema_manifest = schema_output_file.with_prefix(METADATA).as_manifest(
-        size_of(s3, config.s3_bucket, schema_output_file)
+        size_of(s3, config.s3_bucket, schema_output_file), response.get("VersionId")
     )
 
     return schema, schema_manifest
@@ -379,8 +379,10 @@ def publish_records_of_model(
 
     # Construct the header list for a model:
     headers: List[str] = record_headers(model_properties, linked_properties)
-
-    with s3_csv_writer(s3, config.s3_bucket, str(output_file), headers) as writer:
+    response: Dict[str, str] = {}
+    with s3_csv_writer(
+        s3, config.s3_bucket, str(output_file), headers, response
+    ) as writer:
         for r in db.get_all_records_offset_tx(
             tx=tx,
             model=model,
@@ -391,7 +393,7 @@ def publish_records_of_model(
             writer.writerow(record_row(r, model_properties, linked_properties))
 
     return output_file.with_prefix(METADATA).as_manifest(
-        size_of(s3, config.s3_bucket, output_file)
+        size_of(s3, config.s3_bucket, output_file), response.get("VersionId")
     )
 
 
@@ -425,25 +427,27 @@ def publish_package_proxy_files(
     file_output_file = OutputFile.csv_for_model(PROXY_FILE_MODEL_NAME).with_prefix(
         os.path.join(config.s3_publish_key, METADATA)
     )
+    response: Dict[str, str] = {}
 
     with s3_csv_writer(
         s3,
         config.s3_bucket,
         str(file_output_file),
-        headers=["id", "path", "sourcePackageId"],
+        headers=["sourceFileId", "path", "sourcePackageId"],
+        response=response,
     ) as writer:
         for file_manifest in file_manifests:
             if file_manifest.source_package_id:
                 writer.writerow(
                     [
-                        file_manifest.id,
+                        file_manifest.source_file_id,
                         file_manifest.path,
                         file_manifest.source_package_id,
                     ]
                 )
 
     return file_output_file.with_prefix(METADATA).as_manifest(
-        size_of(s3, config.s3_bucket, file_output_file)
+        size_of(s3, config.s3_bucket, file_output_file), response.get("VersionId")
     )
 
 
@@ -468,10 +472,12 @@ def package_proxy_relationships(
 
     for pp, record in db.get_all_package_proxies_tx(tx):
         for file_manifest in files_by_package_id.get(pp.package_node_id, []):
-            assert file_manifest.id is not None
+            assert file_manifest.source_file_id is not None
 
             yield PackageProxyRelationship(
-                from_=record.id, to=file_manifest.id, relationship=pp.relationship_type
+                from_=record.id,
+                to=file_manifest.source_file_id,
+                relationship=pp.relationship_type,
             )
 
 
@@ -518,8 +524,10 @@ def publish_relationships(
         relationship_name
     ).with_prefix(os.path.join(config.s3_publish_key, METADATA))
 
+    response: Dict[str, str] = {}
+
     with s3_csv_writer(
-        s3, config.s3_bucket, str(output_file), relationship_headers()
+        s3, config.s3_bucket, str(output_file), relationship_headers(), response
     ) as writer:
         for relationship in relationships:
             for rr in db.get_record_relationships_by_model_tx(tx, relationship):
@@ -529,7 +537,7 @@ def publish_relationships(
             writer.writerow([str(pp.from_), str(pp.to), str(pp.relationship)])
 
     return output_file.with_prefix(METADATA).as_manifest(
-        size_of(s3, config.s3_bucket, output_file)
+        size_of(s3, config.s3_bucket, output_file), response.get("VersionId")
     )
 
 
@@ -538,7 +546,7 @@ def size_of(s3, bucket, key) -> int:
 
 
 @contextmanager
-def s3_csv_writer(s3, bucket, key, headers):
+def s3_csv_writer(s3, bucket, key, headers, response={}):
     """
     Context manager for writing a CSV file to S3
 
@@ -553,3 +561,6 @@ def s3_csv_writer(s3, bucket, key, headers):
         yield writer
 
     s3.upload_file(Filename=temp_file.name, Bucket=bucket, Key=str(key))
+    s3_response = s3.head_object(Bucket=bucket, Key=str(key))
+    if s3_response and isinstance(response, dict):
+        response.update(s3_response)

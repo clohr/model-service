@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "ecs_task_iam_policy_document" {
     ]
 
     resources = [
-      data.terraform_remote_state.account.docker_hub_credentials_arn,
+      data.terraform_remote_state.platform_infrastructure.outputs.docker_hub_credentials_arn,
       data.aws_kms_key.ssm_kms_key.arn,
     ]
   }

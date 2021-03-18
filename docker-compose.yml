@@ -78,7 +78,7 @@ services:
       - NEO4J_BOLT_URL=bolt://neo4j-ci:7687
     depends_on:
       - neo4j-ci
-    entrypoint: "./wait-for-it.sh -t 60 neo4j-ci:7687 -- pytest -s -v --skip-integration tests"
+    entrypoint: "./wait-for-it.sh -t 60 neo4j-ci:7687 -- pytest -x -s -v --skip-integration tests"
 
   model-service-lint:
     image: pennsieve/model-service-test:${IMAGE_TAG}

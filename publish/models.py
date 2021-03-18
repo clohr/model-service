@@ -50,8 +50,13 @@ class OutputFile:
     def __str__(self) -> str:
         return self.full_path
 
-    def as_manifest(self, size) -> "FileManifest":
-        return FileManifest(path=self.full_path, size=size, file_type=self.file_type)
+    def as_manifest(self, size: int, version_id: Optional[str]) -> "FileManifest":
+        return FileManifest(
+            path=self.full_path,
+            size=size,
+            file_type=self.file_type,
+            version_id=version_id,
+        )
 
     def with_prefix(self, key_prefix) -> "OutputFile":
         return replace(self, key_prefix=key_prefix)
@@ -274,8 +279,9 @@ class FileManifestSchema(CamelCaseSchema):
     path = fields.String()
     size = fields.Integer()
     file_type = fields.String()
-    id = fields.UUID(allow_none=True)
+    source_file_id = fields.UUID(allow_none=True)
     source_package_id = fields.String(allow_none=True)
+    version_id = fields.String(allow_none=True)
 
     @post_load
     def make(self, data, **kwargs):
@@ -292,8 +298,9 @@ class FileManifest(Serializable):
     path: str
     size: int
     file_type: str
-    id: Optional[UUID] = field(default=None)
+    source_file_id: Optional[UUID] = field(default=None)
     source_package_id: Optional[str] = field(default=None)
+    version_id: Optional[str] = field(default=None)
 
 
 # =============================================================================

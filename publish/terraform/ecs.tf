@@ -9,7 +9,7 @@ data "template_file" "task_definition" {
     service_name              = var.service_name
     tier                      = var.tier
     mount_points              = var.mount_points
-    docker_hub_credentials    = data.terraform_remote_state.account.docker_hub_credentials_arn
+    docker_hub_credentials    = data.terraform_remote_state.platform_infrastructure.outputs.docker_hub_credentials_arn
 
     s3_publish_bucket   = data.terraform_remote_state.platform_infrastructure.outputs.discover_publish_bucket_id
 

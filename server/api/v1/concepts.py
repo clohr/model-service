@@ -172,7 +172,7 @@ def delete_property(
             raise NotFound(
                 f"Could not find property {property_id} of model {concept_id_or_name}"
             )
-        # Emit "UpdateModel" event:
+        # Emit "DeleteModelProperty" event:
         PennsieveJobsClient.get().send_changelog_event(
             organization_id=db.organization_id,
             dataset_id=db.dataset_id,

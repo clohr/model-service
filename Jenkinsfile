@@ -41,7 +41,7 @@ node('executor') {
             }
         }
 
-        if (["master"].contains(env.BRANCH_NAME)) {
+        if (["main"].contains(env.BRANCH_NAME)) {
             stage("Docker") {
 
                 sh "[ -d ./conf ] && sudo chmod -R 777 ./conf && sudo chown -R ubuntu:ubuntu ./conf || return 0"

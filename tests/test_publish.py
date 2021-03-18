@@ -1,4 +1,5 @@
 import csv
+import dataclasses
 import datetime
 import io
 import json
@@ -6,7 +7,7 @@ import os
 from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Dict, List
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import boto3
 import pytest
@@ -43,6 +44,11 @@ class JSON:
     size: int
 
 
+@pytest.fixture(scope="session")
+def dataset_id():
+    return 10
+
+
 def sort_rows(rows: List[Dict[str, str]]) -> List[Dict[str, str]]:
     """
     Sort the rows of a `CSV`.
@@ -57,8 +63,8 @@ def s3(aws_credentials):
 
 
 @pytest.fixture(scope="session")
-def config():
-    return PublishConfig("test-embargo-bucket", "10/233")
+def config(dataset_id):
+    return PublishConfig("test-embargo-bucket", f"versioned/{dataset_id}")
 
 
 @pytest.fixture(scope="function")
@@ -102,7 +108,14 @@ def metadata_key(config):
 
 
 def test_publish(
-    s3, partitioned_db, sample_patient_db, config, read_csv, read_json, metadata_key
+    s3,
+    dataset_id,
+    partitioned_db,
+    sample_patient_db,
+    config,
+    read_csv,
+    read_json,
+    metadata_key,
 ):
 
     # Helpers
@@ -112,6 +125,9 @@ def test_publish(
         return str(sample_patient_db["records"][record_name].id)
 
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     # Setup graph - add more data to the patient DB.
     # ==========================================================================
@@ -158,14 +174,14 @@ def test_publish(
     # These are the file manifests provided by `discover-publish`
     file_manifests = [
         FileManifest(
-            id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            source_file_id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
             path="files/pkg1/file1.txt",
             size=2293,
             file_type="TEXT",
             source_package_id="N:package:1234",
         ),
         FileManifest(
-            id=UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            source_file_id=UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
             path="files/pkg1/file2.csv",
             size=234443,
             file_type="CSV",
@@ -181,7 +197,9 @@ def test_publish(
 
     for o in s3.list_objects(Bucket=config.s3_bucket).get("Contents", []):
         # Don't export a CSV for the best_friend linked property.
-        assert o["Key"] != "10/233/metadata/relationships/best_friend.csv"
+        assert (
+            o["Key"] != f"versioned/{dataset_id}/metadata/relationships/best_friend.csv"
+        )
 
     # Check graph schema
     # ==========================================================================
@@ -423,14 +441,14 @@ def test_publish(
         [
             OrderedDict(
                 {
-                    "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "sourceFileId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
                     "path": "files/pkg1/file1.txt",
                     "sourcePackageId": "N:package:1234",
                 }
             ),
             OrderedDict(
                 {
-                    "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+                    "sourceFileId": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
                     "path": "files/pkg1/file2.csv",
                     "sourcePackageId": "N:package:1234",
                 }
@@ -463,6 +481,15 @@ def test_publish(
 
     # Check file manifest output
     # ==========================================================================
+
+    # Check that version IDs exist for all manifests, then remove them to allow
+    # for comparison:
+    for manifest in graph_manifests:
+        assert manifest.version_id is not None
+
+    graph_manifests = [
+        dataclasses.replace(manifest, version_id=None) for manifest in graph_manifests
+    ]
 
     assert sorted(graph_manifests) == sorted(
         [
@@ -509,6 +536,9 @@ def test_publish(
 
 def test_record_value_serialization(s3, config, read_csv, metadata_key, partitioned_db):
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     patient = partitioned_db.create_model("patient", "Patient")
     partitioned_db.update_properties(
@@ -596,9 +626,12 @@ def test_record_value_serialization(s3, config, read_csv, metadata_key, partitio
 
 
 def test_proxy_relationships_are_merged_with_record_relationships(
-    s3, config, read_csv, metadata_key, partitioned_db
+    s3, dataset_id, config, read_csv, metadata_key, partitioned_db
 ):
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     person = partitioned_db.create_model("person", "Person")
     partitioned_db.update_properties(
@@ -650,22 +683,22 @@ def test_proxy_relationships_are_merged_with_record_relationships(
 
     file_manifests = [
         FileManifest(
-            id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-            path="10/233/files/pkg1/file1.txt",
+            source_file_id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            path=f"versioned/{dataset_id}/files/pkg1/file1.txt",
             size=2293,
             file_type="TEXT",
             source_package_id="N:package:1234",
         ),
         FileManifest(
-            id=UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-            path="10/233/files/pkg1/file2.csv",
+            source_file_id=UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            path=f"versioned/{dataset_id}/files/pkg1/file2.csv",
             size=234443,
             file_type="CSV",
             source_package_id="N:package:1234",
         ),
         FileManifest(
-            id=UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-            path="10/233/files/pkg2/file3.dcm",
+            source_file_id=UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+            path=f"versioned/{dataset_id}/files/pkg2/file3.dcm",
             size=338923,
             file_type="DICOM",
             source_package_id="N:package:4567",
@@ -730,21 +763,24 @@ def test_proxy_relationships_are_merged_with_record_relationships(
 
 
 def test_publish_proxy_record_csv_when_no_proxy_relationships_exist(
-    s3, config, metadata_key, partitioned_db, read_json
+    s3, dataset_id, config, metadata_key, partitioned_db, read_json
 ):
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     file_manifests = [
         FileManifest(
-            id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-            path="10/233/files/pkg1/file1.txt",
+            source_file_id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            path=f"versioned/{dataset_id}/files/pkg1/file1.txt",
             size=2293,
             file_type="TEXT",
             source_package_id="N:package:1234",
         ),
         FileManifest(
-            id=UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-            path="10/233/files/pkg2/file3.dcm",
+            source_file_id=UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+            path=f"versioned/{dataset_id}/files/pkg2/file3.dcm",
             size=338923,
             file_type="DICOM",
             source_package_id="N:package:4567",
@@ -768,6 +804,9 @@ def test_do_not_publish_proxy_record_csv_when_no_source_files_exist(
     s3, config, metadata_key, partitioned_db, read_json
 ):
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     graph_manifests = publish_dataset(partitioned_db, s3, config, file_manifests=[])
     assert sorted([m.path for m in graph_manifests]) == ["metadata/schema.json"]
@@ -781,6 +820,9 @@ def test_publish_thousands_of_records(
     s3, config, read_csv, metadata_key, partitioned_db
 ):
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     patient = partitioned_db.create_model("patient", "Patient")
     partitioned_db.create_records(patient, [{} for i in range(2000)])
@@ -795,6 +837,9 @@ def test_publish_linked_properties_with_no_index(
     s3, config, read_csv, read_json, metadata_key, partitioned_db
 ):
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     gene = partitioned_db.create_model("gene", "Gene")
     partitioned_db.update_properties(
@@ -878,41 +923,48 @@ def test_publish_linked_properties_with_no_index(
     )
 
 
-def test_read_file_manifests(s3):
-    config = PublishConfig("test-publish-bucket", "10/233")
+def test_read_file_manifests(s3, dataset_id):
+    config = PublishConfig("test-publish-bucket", f"versioned/{dataset_id}")
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
+
+    version_id = str(uuid4())
+    body = f"""
+        {{
+          "externalIdToPackagePath" : {{
+          }},
+          "packageManifests" : [
+            {{
+              "path" : "files/test.txt",
+              "size" : 43649,
+              "fileType" : "TEXT",
+              "sourceFileId" : "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+              "sourcePackageId" : "N:package:1234",
+              "versionId": "{version_id}"
+            }}
+          ],
+          "bannerKey" : "banner.jpg",
+          "bannerManifest" : {{
+            "path" : "banner.jpg",
+            "size" : 43649,
+            "fileType" : "JPEG"
+          }},
+          "readmeKey" : "readme.md",
+          "readmeManifest" : {{
+            "path" : "readme.md",
+            "size" : 15,
+            "fileType" : "Markdown"
+          }}
+        }}
+    """
 
     # This would be created by `discover-publish`
     s3.put_object(
         Bucket=config.s3_bucket,
         Key=os.path.join(config.s3_publish_key, "publish.json"),
-        Body="""
-        {
-          "externalIdToPackagePath" : {
-          },
-          "packageManifests" : [
-            {
-              "path" : "files/test.txt",
-              "size" : 43649,
-              "fileType" : "TEXT",
-              "id" : "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-              "sourcePackageId" : "N:package:1234"
-            }
-          ],
-          "bannerKey" : "banner.jpg",
-          "bannerManifest" : {
-            "path" : "banner.jpg",
-            "size" : 43649,
-            "fileType" : "JPEG"
-          },
-          "readmeKey" : "readme.md",
-          "readmeManifest" : {
-            "path" : "readme.md",
-            "size" : 15,
-            "fileType" : "Markdown"
-          }
-        }
-    """,
+        Body=body,
     )
 
     assert read_file_manifests(s3, config) == [
@@ -920,15 +972,19 @@ def test_read_file_manifests(s3):
             path="files/test.txt",
             size=43649,
             file_type="TEXT",
-            id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            source_file_id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
             source_package_id="N:package:1234",
+            version_id=version_id,
         )
     ]
 
 
-def test_write_graph_manifests(s3):
-    config = PublishConfig("test-publish-bucket", "10/233")
+def test_write_graph_manifests(s3, dataset_id):
+    config = PublishConfig("test-publish-bucket", f"versioned/{dataset_id}")
     s3.create_bucket(Bucket=config.s3_bucket)
+    s3.put_bucket_versioning(
+        Bucket=config.s3_bucket, VersioningConfiguration={"Status": "Enabled"}
+    )
 
     graph_manifests = [
         FileManifest(path="metadata/schema.json", file_type="Json", size=233),
@@ -940,9 +996,9 @@ def test_write_graph_manifests(s3):
     assert (
         ExportedGraphManifests.schema()
         .loads(
-            s3.get_object(Bucket=config.s3_bucket, Key="10/233/graph.json")[
-                "Body"
-            ].read()
+            s3.get_object(
+                Bucket=config.s3_bucket, Key=f"versioned/{dataset_id}/graph.json"
+            )["Body"].read()
         )
         .manifests
         == graph_manifests

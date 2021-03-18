@@ -3,7 +3,6 @@
 LOG_LEVEL          ?= "INFO"
 USE_CACHE          ?= "0"
 NEO4J_APOC_VERSION ?= "3.5.0.13"
-PIP_VERSION        := "19.2.3"
 IMAGE_TAG          ?= "latest"
 PORT               ?= 8080
 
@@ -47,16 +46,15 @@ clean: docker-clean
 	rm -f generator/output/*
 	$(MAKE) clean -C docs
 
-# There is a bug with Pip 19.2.0 with "@" in the Nexus index-url
 install:
-	pip install pip==$(PIP_VERSION)
-	pip install --upgrade --extra-index-url "https://$(QUOTED_NEXUS_USER):$(QUOTED_NEXUS_PW)@nexus.pennsieve.cc:443/repository/pypi-prod/simple" --pre -r requirements.txt -r requirements-dev.txt
+	pip install --upgrade pip
+	pip install --upgrade --extra-index-url "https://$(QUOTED_NEXUS_USER):$(QUOTED_NEXUS_PW)@nexus.pennsieve.cc/repository/pypi-prod/simple" --pre -r requirements.txt -r requirements-dev.txt
 
 setup-indexes:
 	python -m server.db.index
 
 test: typecheck format
-	pytest -s -v tests
+	pytest -x -s -v tests
 
 jwt:
 	@echo $(JWT)
